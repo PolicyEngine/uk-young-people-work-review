@@ -1,0 +1,19 @@
+measure_id,expected_direction,expected_size_m,size_year,basis,note
+youth_standard_allowance,saving,,,static cash fiscal UK,Placeholder; hand check: single UC claimants under 25 x £35.32 a month x 12
+youth_route_never_worked,saving,,,static cash fiscal UK,Not computable; no work history in the data
+health_element_under_22,saving,,,static cash fiscal UK,Needs pe-uk first; base is 161k young claimants in the health element group in E&W (interim annex Table 28)
+health_element_under_25,saving,,,static cash fiscal UK,Needs pe-uk first; larger than the under-22 version
+limited_capability_for_work_payment,cost,,,static cash fiscal UK,Needs pe-uk first
+work_allowance_all_ages,cost,,,static cash fiscal UK,Placeholder; all ages; reaches every UC claimant with a work allowance
+youth_guarantee,cost,,,static cash fiscal England,Spending line; unit cost of a 6-month 25-hour place at the 18-20 rate is about £7.3k before support costs
+local_participation_funding,cost,,,static cash fiscal England,Spending line
+employer_nics_under_25,cost,6160,2027,static cash fiscal UK,PolicyEngine scored the 21-24 extension at £6.16bn in 2027-28 (uk-autumn-budget-dashboard-2026 #111); needs pe-uk 2.175.x
+youth_minimum_wage,either,,,static cash fiscal UK,Not computable; earnings are inputs
+apprenticeship_incentives,cost,,,static cash fiscal England,Spending line
+family_benefits_in_training,cost,,,static cash fiscal UK,Placeholder; small; only 20-year-olds in approved education or training
+learning_allowance,cost,,,static cash fiscal England,Needs pe-uk first
+pip_young_people,either,,,static cash fiscal E&W,Needs pe-uk first; base is 416k and £3.3bn in 2024-25 (interim annex Table 28)
+mental_health_access,cost,,,static cash fiscal England,Spending line
+tracking_and_participation_age,cost,,,static cash fiscal England,Spending line if costed
+shared_accommodation_age_25,cost,,,static cash fiscal GB,Placeholder; single renters aged 25-34 on UC or Housing Benefit
+shared_accommodation_care_leavers,cost,,,static cash fiscal GB,Not computable; no care-leaver flag

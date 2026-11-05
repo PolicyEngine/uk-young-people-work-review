@@ -34,3 +34,31 @@ The pinned engine does not yet model the employer National Insurance zero rate f
 ## Licence
 
 AGPL-3.0, as for other PolicyEngine repositories. See [LICENSE](LICENSE).
+
+## How to run (template)
+
+```sh
+uv sync --extra dev                       # analysis package and tests, no engine
+uv run pytest -q                          # registry, templates, limits, publication, households
+uv run young-people-work generate         # writes data/results.json and the dashboard copy (placeholder mode)
+uv run python scripts/check_public_data.py
+
+cd dashboard && bun install && bun run dev   # local page on http://localhost:3000
+```
+
+`uv sync --extra model` adds `policyengine[uk]==6.11.1` for real runs and the household calculator (`uv run young-people-work household <preset>`).
+
+## Layout
+
+| Path | What it holds |
+|---|---|
+| `src/young_people_work/reforms.py` | Measure registry: every candidate recommendation with its route and where it applies; all placeholders |
+| `src/young_people_work/measures/` | Hand-written modifiers, one per module (none yet) |
+| `src/young_people_work/measure_templates.py` | Parameter builders (`rate_change`, `threshold_change`) |
+| `src/young_people_work/data_limits.py`, `model_limits.py` | What the data and the model cannot cost, with the reason |
+| `src/young_people_work/publication.py`, `sign_off.py` | Manifest, receipts, disclosure floor, validation; sign-off switch (on) |
+| `src/young_people_work/pipeline.py`, `cli.py`, `household.py` | Generation and the household calculator |
+| `data_inputs/` | Official figures, expected effects, drill packet hashes |
+| `docs/` | Method, schema, data contract, colours, runbook, drill, candidate reforms, risk register |
+| `scripts/` | Public data guard; weighted check of the young people base (team only) |
+| `dashboard/` | Next 16, React 19, `@policyengine/ui-kit`, Recharts, bun |

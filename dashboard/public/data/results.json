@@ -1,0 +1,1536 @@
+{
+  "schema_version": 1,
+  "status": "placeholder",
+  "banner": "Pre-release template: placeholder figures, not PolicyEngine estimates",
+  "engine": {
+    "policyengine": "6.11.1",
+    "policyengine_uk": "2.151.0",
+    "dataset": "microcosm-uk-2024-25-national-20261025T091414Z-a6299504",
+    "validated_pair": false
+  },
+  "basis": {
+    "cost": "Static, cash, fiscal year, UK unless a measure says otherwise, £ million; positive is a cost to the Exchequer",
+    "distribution": "Average change in household net income by equivalised household income decile, UK",
+    "age_band": "Average change in net income of the young person's benefit unit, by the age of its oldest adult",
+    "behaviour": "No behavioural response: no change in hours, hiring, education or claims"
+  },
+  "base_year": 2026,
+  "years": [
+    2027,
+    2028,
+    2029,
+    2030
+  ],
+  "age_bands": [
+    "16-17",
+    "18-20",
+    "21-24",
+    "25 and over"
+  ],
+  "measures": [
+    {
+      "id": "youth_standard_allowance",
+      "name": "Lower youth standard allowance (illustrative)",
+      "description": "Illustrative age-only stand-in for a separate youth route: the UC standard allowance for single claimants under 25 at 90% of the 2027-28 rate (£317.85 a month).",
+      "recommendation": "A separate route for young people who have never worked, with less cash and more support",
+      "likelihood": "high",
+      "route": "dashboard-param",
+      "route_reason": "The cash part for everyone under 25 is a parameter change. The never-worked test and the support offer are not modelled.",
+      "placeholder": true,
+      "computable": true,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [
+        4
+      ],
+      "coverage": "UK",
+      "parameters": [
+        "gov.dwp.universal_credit.standard_allowance.amount.SINGLE_YOUNG"
+      ],
+      "status": "held-placeholder",
+      "receipt": "d3c57c01e9c10665ca2fea3ec7487e7d18e89ffb248ea08218d85ab9a073a5d5",
+      "budgetary_impact": [
+        {
+          "year": 2027,
+          "fiscal_year": "2027-28",
+          "value_m": -446.0
+        },
+        {
+          "year": 2028,
+          "fiscal_year": "2028-29",
+          "value_m": -464.0
+        },
+        {
+          "year": 2029,
+          "fiscal_year": "2029-30",
+          "value_m": -482.0
+        },
+        {
+          "year": 2030,
+          "fiscal_year": "2030-31",
+          "value_m": -500.0
+        }
+      ],
+      "decile": [
+        {
+          "decile": 1,
+          "avg_change_gbp": -48.0,
+          "pct_change": -0.29
+        },
+        {
+          "decile": 2,
+          "avg_change_gbp": -28.0,
+          "pct_change": -0.22
+        },
+        {
+          "decile": 3,
+          "avg_change_gbp": -32.0,
+          "pct_change": -0.12
+        },
+        {
+          "decile": 4,
+          "avg_change_gbp": -19.0,
+          "pct_change": -0.05
+        },
+        {
+          "decile": 5,
+          "avg_change_gbp": -28.0,
+          "pct_change": -0.18
+        },
+        {
+          "decile": 6,
+          "avg_change_gbp": -23.0,
+          "pct_change": -0.06
+        },
+        {
+          "decile": 7,
+          "avg_change_gbp": -14.0,
+          "pct_change": -0.07
+        },
+        {
+          "decile": 8,
+          "avg_change_gbp": -17.0,
+          "pct_change": -0.03
+        },
+        {
+          "decile": 9,
+          "avg_change_gbp": -9.0,
+          "pct_change": -0.03
+        },
+        {
+          "decile": 10,
+          "avg_change_gbp": -5.0,
+          "pct_change": -0.01
+        }
+      ],
+      "winners_losers": [
+        {
+          "decile": 1,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 89.5,
+          "lose_less_5": 5.9,
+          "lose_more_5": 4.6
+        },
+        {
+          "decile": 2,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 89.6,
+          "lose_less_5": 8.4,
+          "lose_more_5": 2.0
+        },
+        {
+          "decile": 3,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 89.7,
+          "lose_less_5": 8.0,
+          "lose_more_5": 2.3
+        },
+        {
+          "decile": 4,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 95.5,
+          "lose_less_5": 1.9,
+          "lose_more_5": 2.6
+        },
+        {
+          "decile": 5,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 98.0,
+          "lose_less_5": 1.7,
+          "lose_more_5": 0.3
+        },
+        {
+          "decile": 6,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 95.3,
+          "lose_less_5": 3.1,
+          "lose_more_5": 1.6
+        },
+        {
+          "decile": 7,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 97.0,
+          "lose_less_5": 2.0,
+          "lose_more_5": 1.0
+        },
+        {
+          "decile": 8,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 98.1,
+          "lose_less_5": 1.3,
+          "lose_more_5": 0.6
+        },
+        {
+          "decile": 9,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 98.0,
+          "lose_less_5": 1.9,
+          "lose_more_5": 0.1
+        },
+        {
+          "decile": 10,
+          "gain_more_5": 0.0,
+          "gain_less_5": 0.0,
+          "no_change": 99.5,
+          "lose_less_5": 0.3,
+          "lose_more_5": 0.2
+        }
+      ],
+      "age_band": [
+        {
+          "age_band": "16-17",
+          "avg_change_gbp": -34.0
+        },
+        {
+          "age_band": "18-20",
+          "avg_change_gbp": -263.0
+        },
+        {
+          "age_band": "21-24",
+          "avg_change_gbp": -257.0
+        },
+        {
+          "age_band": "25 and over",
+          "avg_change_gbp": -19.0
+        }
+      ],
+      "people_affected_k": 268.0
+    },
+    {
+      "id": "youth_route_never_worked",
+      "name": "Youth route for those who have never worked",
+      "description": "Young people under 25 who have never worked move to a separate benefit route with a participation offer.",
+      "recommendation": "A separate route for young people who have never worked, with less cash and more support",
+      "likelihood": "high",
+      "route": "not-computable",
+      "route_reason": "The data hold no work history. The closest proxy, no earnings in the survey year, includes people who have worked before.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [
+        "has_ever_worked",
+        "neet_status"
+      ],
+      "issues": [
+        4,
+        7
+      ],
+      "coverage": "UK",
+      "parameters": [],
+      "status": "not-computable",
+      "receipt": "c00fb2812346ce92a4d5b07e1c6181ce50571d406dfbb783471eb059d36bc68e",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "health_element_under_22",
+      "name": "No UC health element under 22",
+      "description": "New claimants under 22 get no UC health element (LCWRA) and are offered support instead.",
+      "recommendation": "Health element for young people replaced by a support offer",
+      "likelihood": "high",
+      "route": "needs-pe-uk-first",
+      "route_reason": "The health element has no age test, and in 2026-2032 the rebalancing step stores it directly, overriding the amount parameter. Needs an age parameter upstream.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [
+        "wca_outcome"
+      ],
+      "issues": [
+        2,
+        3
+      ],
+      "coverage": "UK",
+      "parameters": [],
+      "status": "needs-pe-uk-first",
+      "receipt": "2b5c504d322d1667c33cf6724ca2c61bfb4c1e37f21802cb9b745846a9e32215",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "health_element_under_25",
+      "name": "No UC health element under 25",
+      "description": "As above, for new claimants under 25.",
+      "recommendation": "Health element for young people replaced by a support offer",
+      "likelihood": "medium",
+      "route": "needs-pe-uk-first",
+      "route_reason": "Same as the under-22 version: needs an age parameter that the rebalancing step respects.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [
+        "wca_outcome"
+      ],
+      "issues": [
+        2,
+        3
+      ],
+      "coverage": "UK",
+      "parameters": [],
+      "status": "needs-pe-uk-first",
+      "receipt": "b3e02a0236258d985d71f19e1057a10aef215dd3b913babf5d3a379a03799538",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "limited_capability_for_work_payment",
+      "name": "Payment for limited capability for work",
+      "description": "A smaller payment for young claimants with limited capability for work, in place of the all-or-nothing health element.",
+      "recommendation": "Graded health support instead of a single health element",
+      "likelihood": "medium",
+      "route": "needs-pe-uk-first",
+      "route_reason": "The model has a limited capability for work flag but no element amount for it; needs a new variable.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [
+        "wca_outcome"
+      ],
+      "issues": [
+        3
+      ],
+      "coverage": "UK",
+      "parameters": [],
+      "status": "needs-pe-uk-first",
+      "receipt": "2f8a541c5051f788e9ab046f1b43fe9683a582a02ae4572610d9b289057474ec",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "work_allowance_all_ages",
+      "name": "Higher work allowances (illustrative)",
+      "description": "Illustrative: UC work allowances 20% higher (£530.33 and £881.82 a month) for all ages, as a stand-in for a youth work allowance.",
+      "recommendation": "Make it pay for young people to try work",
+      "likelihood": "medium",
+      "route": "dashboard-param",
+      "route_reason": "The all-ages version is a parameter change. A youth-only work allowance or taper needs an age dimension upstream.",
+      "placeholder": true,
+      "computable": true,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [],
+      "coverage": "UK",
+      "parameters": [
+        "gov.dwp.universal_credit.means_test.work_allowance.with_housing",
+        "gov.dwp.universal_credit.means_test.work_allowance.without_housing"
+      ],
+      "status": "held-placeholder",
+      "receipt": "85d415bb5f8b51c1edfd4c8c947d5f4badd4e636cf87cf676435ebade539fb99",
+      "budgetary_impact": [
+        {
+          "year": 2027,
+          "fiscal_year": "2027-28",
+          "value_m": 672.0
+        },
+        {
+          "year": 2028,
+          "fiscal_year": "2028-29",
+          "value_m": 699.0
+        },
+        {
+          "year": 2029,
+          "fiscal_year": "2029-30",
+          "value_m": 726.0
+        },
+        {
+          "year": 2030,
+          "fiscal_year": "2030-31",
+          "value_m": 752.0
+        }
+      ],
+      "decile": [
+        {
+          "decile": 1,
+          "avg_change_gbp": 22.0,
+          "pct_change": 0.28
+        },
+        {
+          "decile": 2,
+          "avg_change_gbp": 51.0,
+          "pct_change": 0.18
+        },
+        {
+          "decile": 3,
+          "avg_change_gbp": 36.0,
+          "pct_change": 0.11
+        },
+        {
+          "decile": 4,
+          "avg_change_gbp": 24.0,
+          "pct_change": 0.09
+        },
+        {
+          "decile": 5,
+          "avg_change_gbp": 32.0,
+          "pct_change": 0.05
+        },
+        {
+          "decile": 6,
+          "avg_change_gbp": 22.0,
+          "pct_change": 0.05
+        },
+        {
+          "decile": 7,
+          "avg_change_gbp": 21.0,
+          "pct_change": 0.12
+        },
+        {
+          "decile": 8,
+          "avg_change_gbp": 9.0,
+          "pct_change": 0.05
+        },
+        {
+          "decile": 9,
+          "avg_change_gbp": 10.0,
+          "pct_change": 0.02
+        },
+        {
+          "decile": 10,
+          "avg_change_gbp": 3.0,
+          "pct_change": 0.02
+        }
+      ],
+      "winners_losers": [
+        {
+          "decile": 1,
+          "gain_more_5": 1.0,
+          "gain_less_5": 5.9,
+          "no_change": 93.1,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 2,
+          "gain_more_5": 0.1,
+          "gain_less_5": 7.1,
+          "no_change": 92.8,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 3,
+          "gain_more_5": 3.8,
+          "gain_less_5": 7.1,
+          "no_change": 89.1,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 4,
+          "gain_more_5": 3.2,
+          "gain_less_5": 6.7,
+          "no_change": 90.1,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 5,
+          "gain_more_5": 0.8,
+          "gain_less_5": 5.5,
+          "no_change": 93.7,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 6,
+          "gain_more_5": 1.3,
+          "gain_less_5": 2.9,
+          "no_change": 95.8,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 7,
+          "gain_more_5": 1.3,
+          "gain_less_5": 2.0,
+          "no_change": 96.7,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 8,
+          "gain_more_5": 0.2,
+          "gain_less_5": 2.8,
+          "no_change": 97.0,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 9,
+          "gain_more_5": 0.7,
+          "gain_less_5": 0.7,
+          "no_change": 98.6,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 10,
+          "gain_more_5": 0.5,
+          "gain_less_5": 1.0,
+          "no_change": 98.5,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        }
+      ],
+      "age_band": [
+        {
+          "age_band": "16-17",
+          "avg_change_gbp": 75.0
+        },
+        {
+          "age_band": "18-20",
+          "avg_change_gbp": 123.0
+        },
+        {
+          "age_band": "21-24",
+          "avg_change_gbp": 191.0
+        },
+        {
+          "age_band": "25 and over",
+          "avg_change_gbp": 9.0
+        }
+      ],
+      "people_affected_k": 403.0
+    },
+    {
+      "id": "youth_guarantee",
+      "name": "Guarantee of work, training or an apprenticeship",
+      "description": "A job, training place or apprenticeship for every young person who engages, with support and a duty to take up the offer.",
+      "recommendation": "A guarantee for every young person aged 16 to 24",
+      "likelihood": "high",
+      "route": "ledger",
+      "route_reason": "A spending programme. Recorded as a spending line from official figures or a unit cost; a subsidised job's pay can be shown in household examples.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [
+        "neet_status"
+      ],
+      "issues": [
+        7
+      ],
+      "coverage": "UK",
+      "parameters": [],
+      "status": "ledger",
+      "receipt": "d94f66ff61ed9f056c9d20bf843ef6dd99032ff0fcb2823f3517976670e7f1a3",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "local_participation_funding",
+      "name": "Local participation system",
+      "description": "Upfront funding for combined and local authorities in England to run support for young people.",
+      "recommendation": "A locally run participation system",
+      "likelihood": "high",
+      "route": "ledger",
+      "route_reason": "A grant to local government; recorded as a spending line.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [],
+      "coverage": "England",
+      "parameters": [],
+      "status": "ledger",
+      "receipt": "63882093d9f6b94bb6d42b9a2990ff4f0e0f3a6320b1f100dff031ac09ddd4ab",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "employer_nics_under_25",
+      "name": "Employer NICs zero rate to age 25",
+      "description": "Extend the employer National Insurance zero rate from employees under 21 to employees under 25, up to the upper secondary threshold.",
+      "recommendation": "Lower the cost of hiring young people",
+      "likelihood": "medium",
+      "route": "needs-pe-uk-first",
+      "route_reason": "A parameter change in policyengine-uk 2.175.x, but the pinned 2.151.0 does not model the zero rate at all, so it would cost nothing on this bundle.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [
+        1,
+        6
+      ],
+      "coverage": "UK",
+      "parameters": [],
+      "status": "needs-pe-uk-first",
+      "receipt": "df9fb91b70111b0b15438e14a7f1748d1a90f7a13f7870d24cbab47269cfbf5d",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "youth_minimum_wage",
+      "name": "18-20 minimum wage at the National Living Wage (illustrative)",
+      "description": "Illustrative: the 18-20 rate raised to the rate for 21 and over.",
+      "recommendation": "Minimum wage rates for young workers",
+      "likelihood": "low",
+      "route": "not-computable",
+      "route_reason": "Earnings are survey inputs, so a wage rate change does not reach pay; only the UC minimum income floor and similar tests read the rate. Employment effects are not modelled.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [
+        "hiring_flows"
+      ],
+      "issues": [
+        1
+      ],
+      "coverage": "UK",
+      "parameters": [
+        "gov.hmrc.minimum_wage.non_apprentice[1].amount"
+      ],
+      "status": "not-computable",
+      "receipt": "fcaed27e990b46ba4a7274555de66c7bfdd1a06f6ae41506b9dbb129a36a5ece",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "apprenticeship_incentives",
+      "name": "Apprenticeship incentives for employers",
+      "description": "Larger payments to employers who take on apprentices aged 16 to 24.",
+      "recommendation": "More apprenticeships for young people",
+      "likelihood": "medium",
+      "route": "ledger",
+      "route_reason": "A payment to employers per apprentice; recorded as a spending line. The pinned data have no apprentice flag.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [
+        "is_apprentice"
+      ],
+      "issues": [
+        6
+      ],
+      "coverage": "England",
+      "parameters": [],
+      "status": "ledger",
+      "receipt": "a98757d21ea53b3425520ffd4d8971d7d19edc364773f556d496c3c77acf57ed",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "family_benefits_in_training",
+      "name": "Family support for young people in training to 21 (illustrative)",
+      "description": "Illustrative: the UC child element and Child Benefit continue for young people in approved education or training until 21 rather than 20.",
+      "recommendation": "Keep family support while a young person trains",
+      "likelihood": "low",
+      "route": "dashboard-param",
+      "route_reason": "The qualifying young person age limits are parameters. A new learning allowance would need a new variable.",
+      "placeholder": true,
+      "computable": true,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [],
+      "coverage": "UK",
+      "parameters": [
+        "gov.dwp.universal_credit.elements.child.eligibility.qualifying_young_person_age_limit",
+        "gov.hmrc.child_benefit.eligibility.qualifying_young_person_age_limit"
+      ],
+      "status": "held-placeholder",
+      "receipt": "61b07bdf881251fcda623bb53ade2253020f7a5baca26157abb8503a9645214e",
+      "budgetary_impact": [
+        {
+          "year": 2027,
+          "fiscal_year": "2027-28",
+          "value_m": 507.0
+        },
+        {
+          "year": 2028,
+          "fiscal_year": "2028-29",
+          "value_m": 528.0
+        },
+        {
+          "year": 2029,
+          "fiscal_year": "2029-30",
+          "value_m": 548.0
+        },
+        {
+          "year": 2030,
+          "fiscal_year": "2030-31",
+          "value_m": 568.0
+        }
+      ],
+      "decile": [
+        {
+          "decile": 1,
+          "avg_change_gbp": 35.0,
+          "pct_change": 0.21
+        },
+        {
+          "decile": 2,
+          "avg_change_gbp": 28.0,
+          "pct_change": 0.32
+        },
+        {
+          "decile": 3,
+          "avg_change_gbp": 44.0,
+          "pct_change": 0.06
+        },
+        {
+          "decile": 4,
+          "avg_change_gbp": 21.0,
+          "pct_change": 0.08
+        },
+        {
+          "decile": 5,
+          "avg_change_gbp": 21.0,
+          "pct_change": 0.07
+        },
+        {
+          "decile": 6,
+          "avg_change_gbp": 28.0,
+          "pct_change": 0.07
+        },
+        {
+          "decile": 7,
+          "avg_change_gbp": 13.0,
+          "pct_change": 0.12
+        },
+        {
+          "decile": 8,
+          "avg_change_gbp": 11.0,
+          "pct_change": 0.04
+        },
+        {
+          "decile": 9,
+          "avg_change_gbp": 4.0,
+          "pct_change": 0.01
+        },
+        {
+          "decile": 10,
+          "avg_change_gbp": 5.0,
+          "pct_change": 0.02
+        }
+      ],
+      "winners_losers": [
+        {
+          "decile": 1,
+          "gain_more_5": 2.0,
+          "gain_less_5": 7.4,
+          "no_change": 90.6,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 2,
+          "gain_more_5": 0.3,
+          "gain_less_5": 4.0,
+          "no_change": 95.7,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 3,
+          "gain_more_5": 3.1,
+          "gain_less_5": 5.3,
+          "no_change": 91.6,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 4,
+          "gain_more_5": 2.5,
+          "gain_less_5": 4.0,
+          "no_change": 93.5,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 5,
+          "gain_more_5": 0.9,
+          "gain_less_5": 1.8,
+          "no_change": 97.3,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 6,
+          "gain_more_5": 0.5,
+          "gain_less_5": 1.4,
+          "no_change": 98.1,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 7,
+          "gain_more_5": 0.1,
+          "gain_less_5": 1.8,
+          "no_change": 98.1,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 8,
+          "gain_more_5": 0.8,
+          "gain_less_5": 1.8,
+          "no_change": 97.4,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 9,
+          "gain_more_5": 0.3,
+          "gain_less_5": 0.7,
+          "no_change": 99.0,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 10,
+          "gain_more_5": 0.3,
+          "gain_less_5": 0.3,
+          "no_change": 99.4,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        }
+      ],
+      "age_band": [
+        {
+          "age_band": "16-17",
+          "avg_change_gbp": 51.0
+        },
+        {
+          "age_band": "18-20",
+          "avg_change_gbp": 327.0
+        },
+        {
+          "age_band": "21-24",
+          "avg_change_gbp": 201.0
+        },
+        {
+          "age_band": "25 and over",
+          "avg_change_gbp": 15.0
+        }
+      ],
+      "people_affected_k": 304.0
+    },
+    {
+      "id": "learning_allowance",
+      "name": "Learning allowance for young people in training",
+      "description": "A weekly allowance for young people aged 16 to 24 in approved training, tested on household income.",
+      "recommendation": "Financial support to stay in learning",
+      "likelihood": "low",
+      "route": "needs-pe-uk-first",
+      "route_reason": "No such allowance in the model; needs a new variable reading approved training and household income.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [],
+      "coverage": "UK",
+      "parameters": [],
+      "status": "needs-pe-uk-first",
+      "receipt": "c2b21ce92e133374e4a87440c12b4a45751c0f6d02a5b5d24f0b5a96147a50c8",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "pip_young_people",
+      "name": "PIP for young people aged 16 to 24",
+      "description": "Changes to PIP for young people, such as a participation plan alongside or in place of a daily living award.",
+      "recommendation": "Health and disability support for young people",
+      "likelihood": "medium",
+      "route": "needs-pe-uk-first",
+      "route_reason": "PIP rates are parameters but have no age dimension; any age rule needs a new formula. PIP applies in England and Wales.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [],
+      "coverage": "England and Wales",
+      "parameters": [],
+      "status": "needs-pe-uk-first",
+      "receipt": "a89cc88f6f9b06b80f34a910fc04aea76ed83b9137c52b7c6634198e97bbdf38",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "mental_health_access",
+      "name": "Mental health support for young people",
+      "description": "Faster access to mental health support for under-25s.",
+      "recommendation": "Faster mental health support",
+      "likelihood": "medium",
+      "route": "ledger",
+      "route_reason": "A health service measure; recorded as a spending line.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [],
+      "coverage": "England",
+      "parameters": [],
+      "status": "ledger",
+      "receipt": "e93b4df455cfd8ae80cdb7f844e9fcfbfdf345b6fbd783185568afd5d650870d",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "tracking_and_participation_age",
+      "name": "Track every young person; raise the participation age",
+      "description": "A duty to track young people to 24 and a higher participation age in England.",
+      "recommendation": "Know where every young person is",
+      "likelihood": "low",
+      "route": "ledger",
+      "route_reason": "An administrative duty; recorded as a spending line if costed.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [],
+      "coverage": "England",
+      "parameters": [],
+      "status": "ledger",
+      "receipt": "96517db3b81dc37839bca076c009e07ba65c1af7996568097d50ca4041e5ba11",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    },
+    {
+      "id": "shared_accommodation_age_25",
+      "name": "Shared accommodation rate to age 25 (illustrative)",
+      "description": "Illustrative: single renters aged 25 to 34 move from the shared accommodation rate to the one-bedroom rate.",
+      "recommendation": "Housing support for young people",
+      "likelihood": "low",
+      "route": "dashboard-param",
+      "route_reason": "The age threshold is a parameter; modelled directly.",
+      "placeholder": true,
+      "computable": true,
+      "publishable": false,
+      "data_needs": [],
+      "issues": [],
+      "coverage": "UK",
+      "parameters": [
+        "gov.dwp.LHA.shared_accommodation_age_threshold"
+      ],
+      "status": "held-placeholder",
+      "receipt": "23799494af50b5805a665599a73e6d5cbba0c07faeaee0b734aecf99ca0b371d",
+      "budgetary_impact": [
+        {
+          "year": 2027,
+          "fiscal_year": "2027-28",
+          "value_m": 207.0
+        },
+        {
+          "year": 2028,
+          "fiscal_year": "2028-29",
+          "value_m": 215.0
+        },
+        {
+          "year": 2029,
+          "fiscal_year": "2029-30",
+          "value_m": 224.0
+        },
+        {
+          "year": 2030,
+          "fiscal_year": "2030-31",
+          "value_m": 232.0
+        }
+      ],
+      "decile": [
+        {
+          "decile": 1,
+          "avg_change_gbp": 23.0,
+          "pct_change": 0.2
+        },
+        {
+          "decile": 2,
+          "avg_change_gbp": 33.0,
+          "pct_change": 0.13
+        },
+        {
+          "decile": 3,
+          "avg_change_gbp": 21.0,
+          "pct_change": 0.21
+        },
+        {
+          "decile": 4,
+          "avg_change_gbp": 33.0,
+          "pct_change": 0.16
+        },
+        {
+          "decile": 5,
+          "avg_change_gbp": 25.0,
+          "pct_change": 0.05
+        },
+        {
+          "decile": 6,
+          "avg_change_gbp": 23.0,
+          "pct_change": 0.12
+        },
+        {
+          "decile": 7,
+          "avg_change_gbp": 10.0,
+          "pct_change": 0.11
+        },
+        {
+          "decile": 8,
+          "avg_change_gbp": 11.0,
+          "pct_change": 0.03
+        },
+        {
+          "decile": 9,
+          "avg_change_gbp": 4.0,
+          "pct_change": 0.02
+        },
+        {
+          "decile": 10,
+          "avg_change_gbp": 6.0,
+          "pct_change": 0.02
+        }
+      ],
+      "winners_losers": [
+        {
+          "decile": 1,
+          "gain_more_5": 1.2,
+          "gain_less_5": 2.9,
+          "no_change": 95.9,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 2,
+          "gain_more_5": 3.5,
+          "gain_less_5": 10.8,
+          "no_change": 85.7,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 3,
+          "gain_more_5": 3.0,
+          "gain_less_5": 6.3,
+          "no_change": 90.7,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 4,
+          "gain_more_5": 1.1,
+          "gain_less_5": 2.8,
+          "no_change": 96.1,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 5,
+          "gain_more_5": 1.1,
+          "gain_less_5": 3.5,
+          "no_change": 95.4,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 6,
+          "gain_more_5": 2.1,
+          "gain_less_5": 1.1,
+          "no_change": 96.8,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 7,
+          "gain_more_5": 0.4,
+          "gain_less_5": 2.8,
+          "no_change": 96.8,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 8,
+          "gain_more_5": 1.3,
+          "gain_less_5": 2.4,
+          "no_change": 96.3,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 9,
+          "gain_more_5": 0.9,
+          "gain_less_5": 0.6,
+          "no_change": 98.5,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 10,
+          "gain_more_5": 0.3,
+          "gain_less_5": 0.7,
+          "no_change": 99.0,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        }
+      ],
+      "age_band": [
+        {
+          "age_band": "16-17",
+          "avg_change_gbp": 24.0
+        },
+        {
+          "age_band": "18-20",
+          "avg_change_gbp": 127.0
+        },
+        {
+          "age_band": "21-24",
+          "avg_change_gbp": 109.0
+        },
+        {
+          "age_band": "25 and over",
+          "avg_change_gbp": 14.0
+        }
+      ],
+      "people_affected_k": 124.0
+    },
+    {
+      "id": "shared_accommodation_care_leavers",
+      "name": "Shared accommodation rate exemptions for care leavers",
+      "description": "Wider exemptions from the shared accommodation rate for care leavers and other young people at risk.",
+      "recommendation": "Housing support for young people",
+      "likelihood": "low",
+      "route": "not-computable",
+      "route_reason": "The data have no care-leaver flag, and the model does not observe the existing care-leaver and hostel exceptions.",
+      "placeholder": true,
+      "computable": false,
+      "publishable": false,
+      "data_needs": [
+        "is_care_leaver"
+      ],
+      "issues": [
+        5
+      ],
+      "coverage": "UK",
+      "parameters": [],
+      "status": "not-computable",
+      "receipt": "931915cba67789f8dff1c724f057f17aed0d0b2ec3247b4ef1d65b24ffee323e",
+      "budgetary_impact": null,
+      "decile": null,
+      "winners_losers": null,
+      "age_band": null,
+      "people_affected_k": null
+    }
+  ],
+  "context": {
+    "young_claimants": [
+      {
+        "year": 2024,
+        "fiscal_year": "2024-25",
+        "uc_health_caseload_k": 161.0,
+        "uc_health_spend_m": 800.0,
+        "pip_caseload_k": 416.0,
+        "pip_spend_m": 3300.0
+      },
+      {
+        "year": 2026,
+        "fiscal_year": "2026-27",
+        "uc_health_caseload_k": 193.0,
+        "uc_health_spend_m": 1000.0,
+        "pip_caseload_k": 511.0,
+        "pip_spend_m": 4300.0
+      },
+      {
+        "year": 2030,
+        "fiscal_year": "2030-31",
+        "uc_health_caseload_k": 204.0,
+        "uc_health_spend_m": 660.0,
+        "pip_caseload_k": 672.0,
+        "pip_spend_m": 6100.0
+      }
+    ],
+    "young_claimants_source": "Interim report, analytical annex Table 28; England and Wales, ages 16-24",
+    "neet": [
+      {
+        "period": "Jan-Mar 2026",
+        "neet_k": 1012.0,
+        "neet_rate_pct": null
+      },
+      {
+        "period": "Apr-Jun 2026",
+        "neet_k": 981.0,
+        "neet_rate_pct": 13.0
+      }
+    ],
+    "neet_source": "ONS, young people not in education, employment or training, August 2026; UK, ages 16-24"
+  },
+  "households": [
+    {
+      "id": "single_20_looking_for_work",
+      "label": "Single 20-year-old on UC, looking for work, living with a parent who pays the rent",
+      "full_model_only": false,
+      "baseline_uc_monthly": 353.17,
+      "reform_uc_monthly": {
+        "youth_standard_allowance": 317.85,
+        "work_allowance_all_ages": 353.17,
+        "family_benefits_in_training": 353.17,
+        "shared_accommodation_age_25": 353.17
+      }
+    },
+    {
+      "id": "single_20_new_health_element",
+      "label": "Single 20-year-old on UC, new claimant in the health element group",
+      "full_model_only": false,
+      "baseline_uc_monthly": 570.43,
+      "reform_uc_monthly": {
+        "youth_standard_allowance": 535.11,
+        "work_allowance_all_ages": 570.43,
+        "family_benefits_in_training": 570.43,
+        "shared_accommodation_age_25": 570.43
+      }
+    },
+    {
+      "id": "age_22_health_element_pip_renting",
+      "label": "22-year-old renting alone, in the health element group, with standard daily living PIP",
+      "full_model_only": false,
+      "baseline_uc_monthly": 1070.43,
+      "reform_uc_monthly": {
+        "youth_standard_allowance": 1035.11,
+        "work_allowance_all_ages": 1070.43,
+        "family_benefits_in_training": 1070.43,
+        "shared_accommodation_age_25": 1070.43
+      }
+    },
+    {
+      "id": "age_19_part_time",
+      "label": "19-year-old working 10 hours a week at the 18-20 minimum wage",
+      "full_model_only": false,
+      "baseline_uc_monthly": 84.57,
+      "reform_uc_monthly": {
+        "youth_standard_allowance": 49.25,
+        "work_allowance_all_ages": 84.57,
+        "family_benefits_in_training": 84.57,
+        "shared_accommodation_age_25": 84.57
+      }
+    },
+    {
+      "id": "age_20_training_with_lone_parent",
+      "label": "20-year-old in approved training, living with a lone parent on UC",
+      "full_model_only": true,
+      "baseline_uc_monthly": null,
+      "reform_uc_monthly": {
+        "youth_standard_allowance": null,
+        "work_allowance_all_ages": null,
+        "family_benefits_in_training": null,
+        "shared_accommodation_age_25": null
+      }
+    },
+    {
+      "id": "age_28_renting_shared_rate",
+      "label": "28-year-old renting a room, on the shared accommodation rate",
+      "full_model_only": true,
+      "baseline_uc_monthly": null,
+      "reform_uc_monthly": {
+        "youth_standard_allowance": null,
+        "work_allowance_all_ages": null,
+        "family_benefits_in_training": null,
+        "shared_accommodation_age_25": null
+      }
+    }
+  ],
+  "net_income_curves": [
+    {
+      "preset": "single_20_looking_for_work",
+      "label": "Single 20-year-old on UC, looking for work, living with a parent who pays the rent",
+      "hourly_wage": 11.27,
+      "rows": [
+        {
+          "hours": 0,
+          "baseline": 353.17,
+          "youth_standard_allowance": 317.85,
+          "work_allowance_all_ages": 353.17,
+          "family_benefits_in_training": 353.17,
+          "shared_accommodation_age_25": 353.17
+        },
+        {
+          "hours": 5,
+          "baseline": 463.05,
+          "youth_standard_allowance": 427.73,
+          "work_allowance_all_ages": 463.05,
+          "family_benefits_in_training": 463.05,
+          "shared_accommodation_age_25": 463.05
+        },
+        {
+          "hours": 10,
+          "baseline": 572.94,
+          "youth_standard_allowance": 537.62,
+          "work_allowance_all_ages": 572.94,
+          "family_benefits_in_training": 572.94,
+          "shared_accommodation_age_25": 572.94
+        },
+        {
+          "hours": 15,
+          "baseline": 732.55,
+          "youth_standard_allowance": 732.55,
+          "work_allowance_all_ages": 732.55,
+          "family_benefits_in_training": 732.55,
+          "shared_accommodation_age_25": 732.55
+        },
+        {
+          "hours": 20,
+          "baseline": 976.73,
+          "youth_standard_allowance": 976.73,
+          "work_allowance_all_ages": 976.73,
+          "family_benefits_in_training": 976.73,
+          "shared_accommodation_age_25": 976.73
+        },
+        {
+          "hours": 25,
+          "baseline": 1172.36,
+          "youth_standard_allowance": 1172.36,
+          "work_allowance_all_ages": 1172.36,
+          "family_benefits_in_training": 1172.36,
+          "shared_accommodation_age_25": 1172.36
+        },
+        {
+          "hours": 30,
+          "baseline": 1348.17,
+          "youth_standard_allowance": 1348.17,
+          "work_allowance_all_ages": 1348.17,
+          "family_benefits_in_training": 1348.17,
+          "shared_accommodation_age_25": 1348.17
+        },
+        {
+          "hours": 35,
+          "baseline": 1523.98,
+          "youth_standard_allowance": 1523.98,
+          "work_allowance_all_ages": 1523.98,
+          "family_benefits_in_training": 1523.98,
+          "shared_accommodation_age_25": 1523.98
+        },
+        {
+          "hours": 40,
+          "baseline": 1699.8,
+          "youth_standard_allowance": 1699.8,
+          "work_allowance_all_ages": 1699.8,
+          "family_benefits_in_training": 1699.8,
+          "shared_accommodation_age_25": 1699.8
+        }
+      ]
+    },
+    {
+      "preset": "single_20_new_health_element",
+      "label": "Single 20-year-old on UC, new claimant in the health element group",
+      "hourly_wage": 11.27,
+      "rows": [
+        {
+          "hours": 0,
+          "baseline": 570.43,
+          "youth_standard_allowance": 535.11,
+          "work_allowance_all_ages": 570.43,
+          "family_benefits_in_training": 570.43,
+          "shared_accommodation_age_25": 570.43
+        },
+        {
+          "hours": 5,
+          "baseline": 814.61,
+          "youth_standard_allowance": 779.29,
+          "work_allowance_all_ages": 814.61,
+          "family_benefits_in_training": 814.61,
+          "shared_accommodation_age_25": 814.61
+        },
+        {
+          "hours": 10,
+          "baseline": 1058.8,
+          "youth_standard_allowance": 1023.48,
+          "work_allowance_all_ages": 1058.8,
+          "family_benefits_in_training": 1058.8,
+          "shared_accommodation_age_25": 1058.8
+        },
+        {
+          "hours": 15,
+          "baseline": 1302.98,
+          "youth_standard_allowance": 1267.66,
+          "work_allowance_all_ages": 1302.98,
+          "family_benefits_in_training": 1302.98,
+          "shared_accommodation_age_25": 1302.98
+        },
+        {
+          "hours": 20,
+          "baseline": 1414.12,
+          "youth_standard_allowance": 1378.8,
+          "work_allowance_all_ages": 1494.96,
+          "family_benefits_in_training": 1414.12,
+          "shared_accommodation_age_25": 1414.12
+        },
+        {
+          "hours": 25,
+          "baseline": 1475.45,
+          "youth_standard_allowance": 1440.13,
+          "work_allowance_all_ages": 1556.29,
+          "family_benefits_in_training": 1475.45,
+          "shared_accommodation_age_25": 1475.45
+        },
+        {
+          "hours": 30,
+          "baseline": 1516.96,
+          "youth_standard_allowance": 1481.64,
+          "work_allowance_all_ages": 1597.8,
+          "family_benefits_in_training": 1516.96,
+          "shared_accommodation_age_25": 1516.96
+        },
+        {
+          "hours": 35,
+          "baseline": 1558.47,
+          "youth_standard_allowance": 1523.98,
+          "work_allowance_all_ages": 1639.31,
+          "family_benefits_in_training": 1558.47,
+          "shared_accommodation_age_25": 1558.47
+        },
+        {
+          "hours": 40,
+          "baseline": 1699.8,
+          "youth_standard_allowance": 1699.8,
+          "work_allowance_all_ages": 1699.8,
+          "family_benefits_in_training": 1699.8,
+          "shared_accommodation_age_25": 1699.8
+        }
+      ]
+    }
+  ],
+  "data_limits": [
+    {
+      "key": "minimum_wage_does_not_reach_pay",
+      "missing_input": "hourly_wage_response",
+      "reason": "Earnings are survey inputs. A change to a minimum wage rate does not change anyone's pay; only the UC minimum income floor, the benefit cap exception and similar tests read the rate. Hiring and hours effects are not modelled.",
+      "issue": 1
+    },
+    {
+      "key": "has_ever_worked",
+      "missing_input": "has_ever_worked",
+      "reason": "No work history. The proxy, no earnings in the survey year, includes young people who have worked before (issue #4).",
+      "issue": null
+    },
+    {
+      "key": "neet_status",
+      "missing_input": "neet_status",
+      "reason": "No NEET flag or NEET duration. A proxy is built from employment status, education and approved training, and is not calibrated to the ONS count (issue #7).",
+      "issue": null
+    },
+    {
+      "key": "wca_outcome",
+      "missing_input": "wca_outcome",
+      "reason": "No Work Capability Assessment outcome. LCWRA follows disability-benefit receipt, so young claimants in the LCWRA group without PIP or DLA are missed (issue #3).",
+      "issue": null
+    },
+    {
+      "key": "is_care_leaver",
+      "missing_input": "is_care_leaver",
+      "reason": "No care-leaver flag; the shared accommodation rate exceptions for care leavers are not observed (issue #5).",
+      "issue": null
+    },
+    {
+      "key": "is_apprentice",
+      "missing_input": "is_apprentice",
+      "reason": "No apprentice flag in the pinned national build; it is imputed from the 20261103 build onwards (issue #6).",
+      "issue": null
+    },
+    {
+      "key": "hiring_flows",
+      "missing_input": "hiring_flows",
+      "reason": "No employer records, hiring or job-to-job flows; employment effects of wages and incentives are not modelled.",
+      "issue": null
+    }
+  ],
+  "model_limits": [
+    {
+      "key": "employer_nics_zero_rate_missing",
+      "reason": "policyengine-uk 2.151.0, the pinned version, does not model the employer zero rate for under-21s or apprentices under 25. Widening it changes nothing until the pin moves to 2.175.x or later.",
+      "issue": 1
+    },
+    {
+      "key": "minimum_wage_2027_out_of_date",
+      "reason": "The pinned version holds April 2027 minimum wage rates of £12.71, £10.85 and £8.00, against the published £13.21, £11.27 and £8.31.",
+      "issue": 1
+    },
+    {
+      "key": "health_element_shadowed",
+      "reason": "The UC health element has no age test, and in 2026-2032 the rebalancing step stores it with set_model_value, so a change to the amount parameter is overridden.",
+      "issue": 2
+    },
+    {
+      "key": "lcwra_from_disability_benefits",
+      "reason": "LCWRA follows the stored flag is_disabled_for_benefits, not a Work Capability Assessment outcome, so the young LCWRA group is undercounted.",
+      "issue": 3
+    },
+    {
+      "key": "no_age_dimension_in_uc_means_test",
+      "reason": "Work allowances and the taper do not vary by age. An all-ages change stands in for a youth-only one and reaches every UC claimant.",
+      "issue": null
+    },
+    {
+      "key": "youth_rate_single_claimants_only",
+      "reason": "SINGLE_YOUNG covers single claimants under 25 only. Couples where both are under 25 use COUPLE_YOUNG; a youth route needs both, or a new age parameter.",
+      "issue": null
+    },
+    {
+      "key": "pip_no_country_test",
+      "reason": "PIP has no country test, and Scottish Adult Disability Payment is stored as PIP. Mask PIP measures to England and Wales.",
+      "issue": null
+    }
+  ]
+}
