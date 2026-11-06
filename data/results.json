@@ -1606,7 +1606,7 @@
       {
         "period": "Jan-Mar 2026",
         "neet_k": 1012.0,
-        "neet_rate_pct": null
+        "neet_rate_pct": 13.5
       },
       {
         "period": "Apr-Jun 2026",
@@ -1614,7 +1614,7 @@
         "neet_rate_pct": 13.0
       }
     ],
-    "neet_source": "ONS, young people not in education, employment or training, August 2026; UK, ages 16-24"
+    "neet_source": "ONS, young people not in education, employment or training, May and August 2026 bulletins; UK, ages 16-24"
   },
   "households": [
     {

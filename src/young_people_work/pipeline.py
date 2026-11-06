@@ -155,7 +155,7 @@ def _context() -> dict[str, Any]:
             }
             for row in _read_csv("ons_neet_16_24.csv")
         ],
-        "neet_source": "ONS, young people not in education, employment or training, August 2026; UK, ages 16-24",
+        "neet_source": "ONS, young people not in education, employment or training, May and August 2026 bulletins; UK, ages 16-24",
     }
 
 
