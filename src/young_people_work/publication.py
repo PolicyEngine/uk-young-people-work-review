@@ -7,7 +7,9 @@ Dropped: release index, area-code routing, attestations and responsiveness
 """
 
 import hashlib
+import inspect
 import json
+import sys
 from collections.abc import Iterable
 from typing import Any
 
@@ -26,6 +28,14 @@ FIGURE_FIELDS = (
     "people_affected_k",
 )
 
+# Results file statuses. "placeholder": the template's illustrative figures.
+# "mock": a drill build from an invented packet; every view shows the MOCK
+# banner and every mock measure id starts with MOCK_PREFIX. "provisional"
+# and "final": model output on the day.
+STATUSES = ("placeholder", "mock", "provisional", "final")
+BANNER_STATUSES = ("placeholder", "mock")
+MOCK_PREFIX = "mock_"
+
 # Keys that must never appear in a public file: record identifiers and weights.
 FORBIDDEN_KEYS = frozenset(
     {
@@ -41,18 +51,36 @@ FORBIDDEN_KEYS = frozenset(
 )
 
 
-def receipt(reform: Reform) -> str:
-    """SHA-256 of a measure's definition, so a published figure binds its exact inputs."""
+def _callable_identity(function) -> dict[str, str] | None:
+    """A modifier's name and the SHA-256 of its module's source."""
+    if function is None:
+        return None
+    module = sys.modules.get(function.__module__)
+    try:
+        source = inspect.getsource(module) if module else ""
+    except (OSError, TypeError):
+        source = ""
+    return {
+        "name": f"{function.__module__}.{function.__qualname__}",
+        "module_sha256": hashlib.sha256(source.encode()).hexdigest(),
+    }
+
+
+def receipt(reform: Reform, identity: dict[str, Any] | None = None) -> str:
+    """SHA-256 of a measure's definition and, in model mode, of what ran it.
+
+    ``identity`` is the execution identity (installed versions, dataset
+    SHA-256, git SHA, limits digest); placeholder files bind the definition
+    only.
+    """
     payload = {
         "summary": reform.summary(),
         "parameter_changes": reform.parameter_changes,
         "baseline_parameter_changes": reform.baseline_parameter_changes,
-        "modifier": (
-            None
-            if reform.simulation_modifier is None
-            else f"{reform.simulation_modifier.__module__}."
-            f"{reform.simulation_modifier.__qualname__}"
-        ),
+        "modifier": _callable_identity(reform.simulation_modifier),
+        "upper_bound_modifier": _callable_identity(reform.upper_bound_modifier),
+        "applied_before_data_load": reform.applied_before_data_load,
+        "identity": identity,
     }
     text = json.dumps(payload, sort_keys=True, separators=(",", ":"), default=str)
     return hashlib.sha256(text.encode()).hexdigest()
@@ -122,11 +150,24 @@ def validate_public(results: dict[str, Any]) -> list[str]:
         if key == "n_households":
             errors.append(f"{where}: record counts are not published")
     measures = results.get("measures", [])
+    status = results.get("status")
+    if status not in STATUSES:
+        errors.append(f"$.status: {status!r} is not one of {', '.join(STATUSES)}")
     any_placeholder = any(m.get("placeholder") for m in measures)
-    if any_placeholder and results.get("status") != "placeholder":
-        errors.append("$.status: a placeholder measure needs status 'placeholder'")
-    if results.get("status") == "placeholder" and not results.get("banner"):
-        errors.append("$.banner: placeholder figures need the banner text")
+    if any_placeholder and status not in BANNER_STATUSES:
+        errors.append("$.status: a placeholder measure needs status 'placeholder' or 'mock'")
+    if status in BANNER_STATUSES and not results.get("banner"):
+        errors.append(f"$.banner: {status} figures need the banner text")
+    any_mock = any(str(m.get("id", "")).startswith(MOCK_PREFIX) for m in measures)
+    if any_mock and status != "mock":
+        errors.append("$.status: a mock_ measure needs status 'mock'")
+    if status == "mock" and "MOCK" not in str(results.get("banner", "")):
+        errors.append("$.banner: a mock file's banner must say MOCK")
+    if status in ("provisional", "final") and not results.get("engine", {}).get("validated_pair"):
+        errors.append(
+            "$.engine.validated_pair: a public build needs the certified engine "
+            "and data pair; an unvalidated run is never published"
+        )
     for measure in measures:
         mid = measure.get("id", "?")
         if not measure.get("computable"):
