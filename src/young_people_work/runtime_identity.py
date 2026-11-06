@@ -26,6 +26,22 @@ PINNED = {
 }
 
 
+def ensure_data_token() -> None:
+    """policyengine.py reads HUGGING_FACE_TOKEN only; fall back to the saved
+    Hugging Face login so the token never goes on a command line."""
+    import os
+
+    if os.environ.get("HUGGING_FACE_TOKEN"):
+        return
+    try:
+        from huggingface_hub import get_token
+    except ImportError:
+        return
+    token = get_token()
+    if token:
+        os.environ["HUGGING_FACE_TOKEN"] = token
+
+
 def installed_versions() -> dict[str, str | None]:
     out: dict[str, str | None] = {}
     for name in PACKAGES:

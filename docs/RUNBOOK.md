@@ -9,7 +9,7 @@ The one-page version is `docs/event-day-checklist.md`.
 | Step | Command | Heavy |
 |---|---|---|
 | Install | `uv sync --locked --extra model --extra dev`, then `cd dashboard && bun install --frozen-lockfile` | no |
-| Data login | the saved read-only Hugging Face login (never print it); `managed_microsimulation` downloads the certified file once | no |
+| Data login | the saved read-only Hugging Face login (never print it). policyengine.py reads only `HUGGING_FACE_TOKEN`; `model-run` and `certified_data` fall back to the saved login. `uv run python -m young_people_work.certified_data` downloads the certified file once and checks its SHA-256 | no |
 | One measure | `uv run young-people-work model-run --measure <id>` | yes: takes `/tmp/pe-heavy.lock`, waits for 14 GB free+inactive |
 | Package | `uv run young-people-work model-run --package` | yes |
 | All of it | `make model` (each measure in its own process, then the package, then assembly) | yes |
@@ -66,6 +66,6 @@ The page is noindex and bannered until the figures are reconciled and signed off
 3. Re-run `pytest`; `tests/test_model_engine.py` re-reads `CURRENT_VALUES`, `PROTECTED_HEALTH_ELEMENT`, `NATIONAL_LIVING_WAGE` and the rebalanced years from the new engine and fails where they moved. Update them.
 4. Re-check each entry of `data_limits.LIMITS_BY_BUILD` against the new build (for example `is_apprentice` from 0639b9c7) and the model limits (the employer zero rate exists from policyengine-uk 2.165.1; the 2027 minimum wage rates from 2.168.0).
 5. `make model`, then hand-check the household presets against the previous run and explain each change.
-6. The certified-data CI job (to add once the repository has the read secret) checks the bundle's dataset hash.
+6. The certified-data CI job (`python -m young_people_work.certified_data`) checks the bundle's dataset hash once the repository has the read secret `PE_UK_PRIVATE_HF_READ_TOKEN`; until then it reports that it was skipped.
 
 Nothing deploys from this repository until the team chooses a target (`.github/workflows/deploy.yml`).

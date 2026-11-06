@@ -118,6 +118,7 @@ def build_microsimulation(scenario=None, dataset: str | None = None):
     """A Microsimulation pinned to the installed policyengine.py bundle."""
     import policyengine as pe
 
+    runtime_identity.ensure_data_token()
     kwargs = {} if scenario is None else {"scenario": scenario}
     return pe.uk.managed_microsimulation(
         dataset=dataset, allow_unmanaged=dataset is not None, **kwargs

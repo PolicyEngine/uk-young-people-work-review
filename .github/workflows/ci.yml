@@ -104,3 +104,31 @@ jobs:
           grep -q 'mock-banner' .next/server/app/index.html
           grep -q 'MOCK' .next/server/app/index.html
           ! grep -q 'data-testid="placeholder-banner"' .next/server/app/index.html
+
+  certified-data:
+    # Downloads the bundle's certified dataset and checks its hash. Needs the
+    # read-only data secret (PE_UK_PRIVATE_HF_READ_TOKEN), which a repository
+    # admin adds; without it the job says so and passes. Fork PRs get no
+    # secrets; never run this on pull_request_target.
+    name: Certified data
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      HUGGING_FACE_TOKEN: ${{ secrets.PE_UK_PRIVATE_HF_READ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v8.1.0
+        with:
+          save-cache: false
+      - name: Install
+        run: uv sync --locked --extra model --extra dev
+      - name: Check the bundle's certified dataset
+        run: |
+          if [ -z "$HUGGING_FACE_TOKEN" ]; then
+            echo "::notice::PE_UK_PRIVATE_HF_READ_TOKEN is not set; certified-data check skipped"
+            exit 0
+          fi
+          uv run python -m young_people_work.certified_data
