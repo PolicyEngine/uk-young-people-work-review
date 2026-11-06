@@ -78,11 +78,25 @@ def main(path: str) -> int:
         ("NEET proxy 16-24", total(neet), "ONS 981k (Apr-Jun 2026)"),
         ("UC reported, 16-24", total(young & uc), "DWP, about 900k young claimants"),
         ("PIP, 16-24", total(young & pip), "Interim annex Table 28: 416k (E&W, 2024-25)"),
-        ("LCWRA proxy (UC and disabled for benefits), 16-24", total(young & uc & disabled), "Table 28: 161k (E&W, 2024-25)"),
-        ("Never-worked proxy (no earnings), 18-24", total((age >= 18) & (age <= 24) & ~earns), "none"),
+        (
+            "LCWRA proxy (UC and disabled for benefits), 16-24",
+            total(young & uc & disabled),
+            "Table 28: 161k (E&W, 2024-25)",
+        ),
+        (
+            "Never-worked proxy (no earnings), 18-24",
+            total((age >= 18) & (age <= 24) & ~earns),
+            "none",
+        ),
     ]
     if "is_apprentice" in cols:
-        rows.append(("Apprentices, 16-24", total(young & cols["is_apprentice"].astype(bool)), "HMRC relief claimed by 72k employers"))
+        rows.append(
+            (
+                "Apprentices, 16-24",
+                total(young & cols["is_apprentice"].astype(bool)),
+                "HMRC relief claimed by 72k employers",
+            )
+        )
     for label, value, benchmark in rows:
         print(f"{label}: {value / 1e3:,.0f}k  (benchmark: {benchmark})")
     print(f"Survey records behind the NEET proxy: {int(neet.sum())}")
