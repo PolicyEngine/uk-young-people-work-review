@@ -16,8 +16,9 @@ on the day each measure follows the uprated path. Measures change parameters
 from ``young_people_work.measures``, one module each; no modifier may live
 here.
 
-Routes (see ``docs/DRILL.md``): four placeholder parameter changes are
-computable today. The rest are routed to the ledger (spending lines), not
+Routes (see ``docs/METHOD.md``): four placeholder parameter changes and two
+structural modifiers (an age test on the UC health element) are computable
+today. The rest are routed to the ledger (spending lines), not
 computable (a data limit) or needs-pe-uk-first, with the reason shown on the
 page.
 """
@@ -26,10 +27,13 @@ import warnings
 
 from young_people_work.measure_templates import (
     DataLimitedWarning,
+    ModelLimitedWarning,
     merge,
     rate_change,
     threshold_change,
+    uc_health_element_change,
 )
+from young_people_work.measures import health_element_min_age
 from young_people_work.models import Likelihood, Reform, Route
 from young_people_work.years import POLICY_YEARS
 
@@ -57,17 +61,48 @@ CURRENT_VALUES = {
     "gov.hmrc.minimum_wage.non_apprentice[2].amount": 12.71,
 }
 
+# Current-law paths by fiscal year in policyengine-uk 2.151.0. Checked against
+# the installed engine by tests/test_model_engine.py, so a pin move that
+# changes them fails there and they are re-read at G0.
+# - The protected UC health element (pre-2026 claimants), monthly: the
+#   Universal Credit Act 2025 s. 4 floor the engine computes each year.
+PROTECTED_HEALTH_ELEMENT = {
+    2027: 442.10315091966623,
+    2028: 448.01657825650784,
+    2029: 454.36556455699156,
+    2030: 463.4519296255613,
+}
+# - The minimum wage for 21 and over, hourly (held flat in 2.151.0; from
+#   2.168.0 it is £13.21 in 2027 and rises after).
+NATIONAL_LIVING_WAGE = {2027: 12.71, 2028: 12.71, 2029: 12.71, 2030: 12.71}
+
 
 def _every_year(value: float) -> dict[int, float]:
     return {year: value for year in POLICY_YEARS}
 
 
+YOUNG_BANDS = ("16-17", "18-20", "21-24")
+
 with warnings.catch_warnings():
-    # The minimum wage placeholder is data limited by design; the warning is
-    # expected and the route below records it.
+    # The model and data limits these placeholders touch are expected; each
+    # measure's route and the Methodology tab record them.
     warnings.simplefilter("ignore", DataLimitedWarning)
-    _MINIMUM_WAGE = rate_change(
-        MW_18_20, _every_year(CURRENT_VALUES["gov.hmrc.minimum_wage.non_apprentice[2].amount"])
+    warnings.simplefilter("ignore", ModelLimitedWarning)
+    # The 18-20 rate set to the 21-and-over rate in each year, read from the
+    # current-law path rather than one literal.
+    _MINIMUM_WAGE = rate_change(MW_18_20, dict(NATIONAL_LIVING_WAGE))
+    # Lowering the under-25 standard allowance would raise the protected
+    # health element for claimants of every age through the UC Act 2025
+    # s. 4 floor; holding it at its current-law path keeps the measure to
+    # the standard allowance (model limit
+    # protected_rate_follows_every_standard_allowance).
+    _YOUTH_STANDARD_ALLOWANCE = merge(
+        rate_change(f"{SA}.SINGLE_YOUNG", _every_year(317.85)),
+        uc_health_element_change(protected=dict(PROTECTED_HEALTH_ELEMENT)),
+    )
+    _WORK_ALLOWANCES = merge(
+        rate_change(f"{WA}.with_housing", _every_year(530.33)),
+        rate_change(f"{WA}.without_housing", _every_year(881.82)),
     )
 
 
@@ -90,7 +125,8 @@ REFORMS: list[Reform] = [
             "The cash part for everyone under 25 is a parameter change. The "
             "never-worked test and the support offer are not modelled."
         ),
-        parameter_changes=rate_change(f"{SA}.SINGLE_YOUNG", _every_year(317.85)),
+        parameter_changes=_YOUTH_STANDARD_ALLOWANCE,
+        age_bands_reached=YOUNG_BANDS,
         issues=[4],
     ),
     Reform(
@@ -115,34 +151,43 @@ REFORMS: list[Reform] = [
     ),
     Reform(
         id="health_element_under_22",
-        name="No UC health element under 22",
+        name="No UC health element for new claimants under 22",
         description=(
-            "New claimants under 22 get no UC health element (LCWRA) and are "
-            "offered support instead."
+            "New claimants under 22 get no UC health element and are offered "
+            "support instead. Shown as a range: from the claimants the model "
+            "treats as new, up to every claimant under 22."
         ),
         recommendation="Health element for young people replaced by a support offer",
         likelihood=Likelihood.HIGH,
-        route=Route.NEEDS_PE_UK_FIRST,
+        route=Route.DASHBOARD_STRUCTURAL,
         route_reason=(
-            "The health element has no age test, and in 2026-2032 the "
-            "rebalancing step stores it directly, overriding the amount "
-            "parameter. Needs an age parameter upstream."
+            "An age test applied to the health element before the model sets "
+            "each claimant's rate. The support offer is not modelled."
         ),
+        simulation_modifier=health_element_min_age.new_claimants_under_22,
+        upper_bound_modifier=health_element_min_age.all_claimants_under_22,
+        applied_before_data_load=True,
         data_needs=["wca_outcome"],
+        age_bands_reached=YOUNG_BANDS,
         issues=[2, 3],
     ),
     Reform(
         id="health_element_under_25",
-        name="No UC health element under 25",
+        name="No UC health element for new claimants under 25",
         description="As above, for new claimants under 25.",
         recommendation="Health element for young people replaced by a support offer",
         likelihood=Likelihood.MEDIUM,
-        route=Route.NEEDS_PE_UK_FIRST,
+        route=Route.DASHBOARD_STRUCTURAL,
         route_reason=(
-            "Same as the under-22 version: needs an age parameter that the "
-            "rebalancing step respects."
+            "An age test applied to the health element before the model sets "
+            "each claimant's rate. The support offer is not modelled."
         ),
+        simulation_modifier=health_element_min_age.new_claimants_under_25,
+        upper_bound_modifier=health_element_min_age.all_claimants_under_25,
+        applied_before_data_load=True,
         data_needs=["wca_outcome"],
+        age_bands_reached=YOUNG_BANDS,
+        in_headline=False,
         issues=[2, 3],
     ),
     Reform(
@@ -176,10 +221,8 @@ REFORMS: list[Reform] = [
             "The all-ages version is a parameter change. A youth-only work "
             "allowance or taper needs an age dimension upstream."
         ),
-        parameter_changes=merge(
-            rate_change(f"{WA}.with_housing", _every_year(530.33)),
-            rate_change(f"{WA}.without_housing", _every_year(881.82)),
-        ),
+        parameter_changes=_WORK_ALLOWANCES,
+        in_headline=False,
     ),
     Reform(
         id="youth_guarantee",
@@ -224,18 +267,16 @@ REFORMS: list[Reform] = [
         likelihood=Likelihood.MEDIUM,
         route=Route.NEEDS_PE_UK_FIRST,
         route_reason=(
-            "A parameter change in policyengine-uk 2.175.x, but the pinned "
-            "2.151.0 does not model the zero rate at all, so it would cost "
-            "nothing on this bundle."
+            "The pinned model version does not include the employer zero rate "
+            "for young employees, so the extension cannot be costed until the "
+            "model is updated."
         ),
         issues=[1, 6],
     ),
     Reform(
         id="youth_minimum_wage",
         name="18-20 minimum wage at the National Living Wage (illustrative)",
-        description=(
-            "Illustrative: the 18-20 rate raised to the rate for 21 and over."
-        ),
+        description=("Illustrative: the 18-20 rate raised to the rate for 21 and over."),
         recommendation="Minimum wage rates for young workers",
         likelihood=Likelihood.LOW,
         route=Route.NOT_COMPUTABLE,
@@ -251,9 +292,7 @@ REFORMS: list[Reform] = [
     Reform(
         id="apprenticeship_incentives",
         name="Apprenticeship incentives for employers",
-        description=(
-            "Larger payments to employers who take on apprentices aged 16 to 24."
-        ),
+        description=("Larger payments to employers who take on apprentices aged 16 to 24."),
         recommendation="More apprenticeships for young people",
         likelihood=Likelihood.MEDIUM,
         route=Route.LEDGER,
@@ -284,6 +323,7 @@ REFORMS: list[Reform] = [
             threshold_change(UC_QYP, _every_year(21)),
             threshold_change(CB_QYP, _every_year(21)),
         ),
+        age_bands_reached=("18-20", "21-24", "25 and over"),
     ),
     Reform(
         id="learning_allowance",
@@ -330,8 +370,7 @@ REFORMS: list[Reform] = [
         id="tracking_and_participation_age",
         name="Track every young person; raise the participation age",
         description=(
-            "A duty to track young people to 24 and a higher participation age "
-            "in England."
+            "A duty to track young people to 24 and a higher participation age in England."
         ),
         recommendation="Know where every young person is",
         likelihood=Likelihood.LOW,
@@ -351,6 +390,8 @@ REFORMS: list[Reform] = [
         route=Route.DASHBOARD_PARAM,
         route_reason="The age threshold is a parameter; modelled directly.",
         parameter_changes=threshold_change(LHA_SAR_AGE, _every_year(25)),
+        age_bands_reached=("25 and over",),
+        in_headline=False,
     ),
     Reform(
         id="shared_accommodation_care_leavers",

@@ -1,12 +1,15 @@
 import pytest
 
 from young_people_work import data_limits
+from young_people_work.measure_templates import UC_PROTECTED_HEALTH
 from young_people_work.models import Likelihood, Reform, Route
 from young_people_work.reforms import CURRENT_VALUES, REFORMS, REFORMS_BY_ID, get_reform
 from young_people_work.years import POLICY_YEARS
 
 COMPUTABLE = {
     "youth_standard_allowance",
+    "health_element_under_22",
+    "health_element_under_25",
     "work_allowance_all_ages",
     "family_benefits_in_training",
     "shared_accommodation_age_25",
@@ -39,15 +42,18 @@ def test_parameter_years_cover_policy_years(reform):
 
 @pytest.mark.parametrize("reform", REFORMS, ids=lambda r: r.id)
 def test_data_needs_are_documented(reform):
-    known = set(data_limits.MISSING_INPUTS) | {limit.missing_input for limit in data_limits.LIMITS}
+    known = set(data_limits.MISSING_INPUTS_BY_KEY) | {
+        limit.missing_input for limit in data_limits.LIMITS
+    }
     assert set(reform.data_needs) <= known
 
 
 def test_computable_measures():
     assert {r.id for r in REFORMS if r.computable} == COMPUTABLE
     for reform in REFORMS:
-        if reform.computable:
-            assert set(reform.parameter_changes) <= set(CURRENT_VALUES)
+        if reform.computable and reform.parameter_changes:
+            sketch_paths = set(reform.parameter_changes) - {UC_PROTECTED_HEALTH}
+            assert sketch_paths <= set(CURRENT_VALUES)
 
 
 def test_minimum_wage_measure_is_not_computable():
@@ -57,11 +63,25 @@ def test_minimum_wage_measure_is_not_computable():
     assert reform.route is Route.NOT_COMPUTABLE
 
 
-def test_health_element_and_employer_nics_need_the_model_first():
-    for reform_id in ("health_element_under_22", "health_element_under_25", "employer_nics_under_25"):
+def test_employer_nics_needs_the_model_first():
+    reform = get_reform("employer_nics_under_25")
+    assert reform.route is Route.NEEDS_PE_UK_FIRST
+    assert reform.parameter_changes is None
+
+
+def test_health_element_age_test_is_a_before_load_modifier():
+    for reform_id in ("health_element_under_22", "health_element_under_25"):
         reform = get_reform(reform_id)
-        assert reform.route is Route.NEEDS_PE_UK_FIRST
-        assert reform.parameter_changes is None
+        assert reform.route is Route.DASHBOARD_STRUCTURAL
+        assert reform.applied_before_data_load is True
+        assert reform.upper_bound_modifier is not None
+
+
+def test_headline_excludes_all_ages_and_older_stand_ins():
+    headline = {r.id for r in REFORMS if r.computable and r.in_headline}
+    assert "work_allowance_all_ages" not in headline
+    assert "shared_accommodation_age_25" not in headline
+    assert "youth_standard_allowance" in headline
     assert 2 in get_reform("health_element_under_22").issues
     assert 1 in get_reform("employer_nics_under_25").issues
 
