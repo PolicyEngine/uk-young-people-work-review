@@ -1,5 +1,9 @@
 @import "tailwindcss";
 @import "@policyengine/ui-kit/theme.css";
+/* The legacy --pe-* tokens, for the ones the inlined block below does not
+   define (text-primary, error, mono font). The inlined values come later and
+   win where both define a token. */
+@import "@policyengine/ui-kit/legacy/tokens.css";
 
 /**
  * Design tokens — inlined from @policyengine/design-system/tokens.css
@@ -49,7 +53,7 @@
   --pe-color-border-light: #E2E8F0;
 
   /* Typography */
-  --pe-font-family-body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --pe-font-family-body: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --pe-font-size-xs: 12px;
   --pe-font-size-sm: 14px;
   --pe-font-weight-medium: 500;
@@ -476,4 +480,79 @@
   background: color-mix(in srgb, var(--pe-color-warning) 35%, var(--pe-color-bg-primary));
   border-bottom: 2px solid var(--pe-color-warning);
   color: var(--pe-color-gray-900);
+}
+
+/* Measure key: the swatch carries the colour, the text stays readable. */
+.measure-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+  font-size: var(--pe-font-size-sm);
+  color: var(--pe-color-gray-700);
+}
+.measure-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.measure-legend-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 2px solid;
+}
+.measure-legend-swatch.line {
+  height: 0;
+  width: 16px;
+  border-width: 2px 0 0;
+  border-radius: 0;
+}
+.measure-legend-swatch.dashed {
+  border-top-style: dashed;
+}
+
+/* Measure chips: a wrapping grid on wide screens, one scrolling row on a
+   phone so the figures stay on the first screen. */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+@media (max-width: 640px) {
+  .chip-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .chip-row .selector-chip {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+.selector-select {
+  border: 1px solid var(--pe-color-border-light);
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: var(--pe-color-bg-primary);
+  color: var(--pe-color-gray-800);
+  font-size: var(--pe-font-size-sm);
+}
+
+.placeholder-banner.mock {
+  background: var(--pe-color-gray-900);
+  color: var(--pe-color-text-inverse);
+}
+
+.chip-row .selector-chip {
+  width: auto;
+  text-align: left;
+}
+.selector-select {
+  max-width: calc(100vw - 80px);
+  text-overflow: ellipsis;
 }

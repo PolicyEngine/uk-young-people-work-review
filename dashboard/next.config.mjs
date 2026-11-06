@@ -10,6 +10,12 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@policyengine/ui-kit"],
   ...(basePath ? { basePath } : {}),
+  // noindex as a header too, so `next start` and any host send it, not
+  // only the meta tag (drill G4 checks both). Removed in the publication
+  // flip (docs/RUNBOOK.md), with the meta tag and the CI greps.
+  async headers() {
+    return [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }];
+  },
 };
 
 export default nextConfig;
