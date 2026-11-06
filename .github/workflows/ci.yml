@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: Analysis tests (pytest, ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+      - name: Install
+        run: uv sync --locked --extra dev
+      - name: Lint
+        run: uv run ruff check .
+      - name: Format
+        run: uv run ruff format --check .
+      - name: Test
+        run: uv run pytest -q
+      - name: Public data guard
+        run: uv run python scripts/check_public_data.py
+
+  model:
+    # The pinned engine, single households only: no survey data, no secret.
+    name: Engine checks (model extra, one household)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+      - name: Install
+        run: uv sync --locked --extra model --extra dev
+      - name: Engine tests
+        run: uv run pytest -q tests/test_model_engine.py
+      - name: One preset household from the full model
+        run: uv run young-people-work household single_20_new_health_element --reform health_element_under_22
+
+  dashboard:
+    name: Dashboard (lint, test, build, smoke)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+      - name: Results file in sync with the analysis output
+        run: cmp ../data/results.json public/data/results.json
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Lint
+        run: bun run lint
+      - name: Test
+        run: bun run test
+      - name: Build
+        run: bun run build
+      - name: Built page is noindex and carries the banner
+        run: |
+          grep -q 'name="robots" content="noindex' .next/server/app/index.html
+          grep -q 'placeholder-banner' .next/server/app/index.html
+      - name: Served page returns 200 with the noindex header
+        run: |
+          bun run start -p 3000 &
+          for i in $(seq 1 30); do curl -sf localhost:3000 > /dev/null && break; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' localhost:3000)" = 200
+          curl -sI localhost:3000 | grep -qi '^x-robots-tag: noindex, nofollow'
+          kill %1
+
+  mock-build:
+    # A drill build (NEXT_PUBLIC_MOCK=1) on a mock results file shows the
+    # MOCK banner, whatever the measure flags say.
+    name: Dashboard MOCK build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+      - uses: oven-sh/setup-bun@v2
+      - name: Mock results file
+        run: |
+          uv sync --locked --extra dev
+          uv run young-people-work generate --status mock --out /tmp/mock/results.json --dashboard-copy dashboard/public/data/results.json
+      - name: Build
+        working-directory: dashboard
+        env:
+          NEXT_PUBLIC_MOCK: "1"
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+          grep -q 'mock-banner' .next/server/app/index.html
+          grep -q 'MOCK' .next/server/app/index.html
+          ! grep -q 'data-testid="placeholder-banner"' .next/server/app/index.html
+
+  certified-data:
+    # Downloads the bundle's certified dataset and checks its hash. Needs the
+    # read-only data secret (PE_UK_PRIVATE_HF_READ_TOKEN), which a repository
+    # admin adds; without it the job says so and passes. Fork PRs get no
+    # secrets; never run this on pull_request_target.
+    name: Certified data
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      HUGGING_FACE_TOKEN: ${{ secrets.PE_UK_PRIVATE_HF_READ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v8.1.0
+        with:
+          save-cache: false
+      - name: Install
+        run: uv sync --locked --extra model --extra dev
+      - name: Check the bundle's certified dataset
+        run: |
+          if [ -z "$HUGGING_FACE_TOKEN" ]; then
+            echo "::notice::PE_UK_PRIVATE_HF_READ_TOKEN is not set; certified-data check skipped"
+            exit 0
+          fi
+          uv run python -m young_people_work.certified_data
