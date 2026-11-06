@@ -98,15 +98,33 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
     ),
     MissingInput(
         "is_care_leaver",
-        "No care-leaver flag, so the shared accommodation rate exceptions for "
-        "care leavers are not observed.",
+        "No survey source records who has left care, so the data have no "
+        "care-leaver flag and the shared accommodation rate exceptions for care "
+        "leavers are not observed. Care leavers appear in example households "
+        "only.",
         5,
     ),
     MissingInput(
         "is_apprentice",
         "No apprentice flag in the pinned national build. Later builds impute "
-        "one from a small number of survey records.",
+        "apprentices among employees aged 21 to 24 to size the employer National "
+        "Insurance relief, from a small number of survey records, so effects on "
+        "apprentices alone are shown in example households, not as national "
+        "totals.",
         6,
+    ),
+    MissingInput(
+        "employees_under_21",
+        "Employees under 21 are not a separate calibration target. The employer "
+        "National Insurance relief for them is checked against HMRC's estimate "
+        "on the data used for publication.",
+        6,
+    ),
+    MissingInput(
+        "uc_claimants_16_17",
+        "Few survey records cover 16- and 17-year-olds on Universal Credit, so "
+        "figures for them are national only and are not split by region.",
+        7,
     ),
     MissingInput(
         "hiring_flows",
