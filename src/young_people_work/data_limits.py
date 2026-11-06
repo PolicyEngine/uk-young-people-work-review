@@ -23,10 +23,7 @@ class DataLimit:
     variables: tuple[str, ...] = field(default_factory=tuple)
 
     def covers(self, path: str) -> bool:
-        return any(
-            path == p or path.startswith((p + ".", p + "["))
-            for p in self.parameters
-        )
+        return any(path == p or path.startswith((p + ".", p + "[")) for p in self.parameters)
 
 
 LIMITS: tuple[DataLimit, ...] = (
@@ -43,38 +40,81 @@ LIMITS: tuple[DataLimit, ...] = (
         issue=1,
         variables=("employment_income", "hours_worked"),
     ),
+    DataLimit(
+        key="pip_assessment_points_missing",
+        parameters=(
+            "gov.dwp.pip.daily_living.points_thresholds",
+            "gov.dwp.pip.mobility.points_thresholds",
+        ),
+        missing_input="pip_dl_points",
+        reason=(
+            "The data hold the PIP award level, not the assessment points behind "
+            "it, so a change to the points needed for an award cannot be costed. "
+            "Changes to the weekly rates can."
+        ),
+        variables=("pip_dl_points", "pip_m_points"),
+    ),
 )
 
-# Inputs a measure may need that no parameter path names. The registry lists
-# them under ``data_needs``; the page shows the reason.
-MISSING_INPUTS: dict[str, str] = {
-    "has_ever_worked": (
-        "No work history. The proxy, no earnings in the survey year, includes "
-        "young people who have worked before (issue #4)."
-    ),
-    "neet_status": (
-        "No NEET flag or NEET duration. A proxy is built from employment status, "
-        "education and approved training, and is not calibrated to the ONS "
-        "count (issue #7)."
-    ),
-    "wca_outcome": (
-        "No Work Capability Assessment outcome. LCWRA follows disability-benefit "
-        "receipt, so young claimants in the LCWRA group without PIP or DLA are "
-        "missed (issue #3)."
-    ),
-    "is_care_leaver": (
-        "No care-leaver flag; the shared accommodation rate exceptions for care "
-        "leavers are not observed (issue #5)."
-    ),
-    "is_apprentice": (
-        "No apprentice flag in the pinned national build; it is imputed from the "
-        "20261103 build onwards (issue #6)."
-    ),
-    "hiring_flows": (
-        "No employer records, hiring or job-to-job flows; employment effects of "
-        "wages and incentives are not modelled."
+# Data limits keyed by the Microcosm national build they hold for. A new
+# build is adopted only after each entry is re-checked (docs/RUNBOOK.md,
+# "Adopting a release"). a6299504 is the build policyengine 6.11.1 pins.
+LIMITS_BY_BUILD: dict[str, tuple[str, ...]] = {
+    "a6299504": (
+        "minimum_wage_does_not_reach_pay",
+        "pip_assessment_points_missing",
     ),
 }
+
+
+@dataclass(frozen=True)
+class MissingInput:
+    """An input a measure may need that no parameter path names."""
+
+    key: str
+    reason: str
+    issue: int | None = None
+
+
+MISSING_INPUTS: tuple[MissingInput, ...] = (
+    MissingInput(
+        "has_ever_worked",
+        "No work history. The closest proxy, no earnings in the survey year, "
+        "includes young people who have worked before.",
+        4,
+    ),
+    MissingInput(
+        "neet_status",
+        "No flag for being out of education, employment or training, or for how "
+        "long. A proxy is built from employment status, education and approved "
+        "training, and is not calibrated to the ONS count.",
+        7,
+    ),
+    MissingInput(
+        "wca_outcome",
+        "No Work Capability Assessment outcome. The health element group is "
+        "inferred from disability-benefit receipt.",
+        3,
+    ),
+    MissingInput(
+        "is_care_leaver",
+        "No care-leaver flag, so the shared accommodation rate exceptions for "
+        "care leavers are not observed.",
+        5,
+    ),
+    MissingInput(
+        "is_apprentice",
+        "No apprentice flag in the pinned national build. Later builds impute "
+        "one from a small number of survey records.",
+        6,
+    ),
+    MissingInput(
+        "hiring_flows",
+        "No employer records, hiring or job-to-job flows, so employment effects "
+        "of wages and incentives are not modelled.",
+    ),
+)
+MISSING_INPUTS_BY_KEY = {item.key: item for item in MISSING_INPUTS}
 
 
 def limits_for_paths(paths: Iterable[str]) -> list[DataLimit]:
