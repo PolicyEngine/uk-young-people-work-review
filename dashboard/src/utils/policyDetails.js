@@ -8,6 +8,18 @@ export const POLICY_DETAILS = {
     whoIsAffected: "Single UC claimants under 25.",
     howItWorks: "Lowers one monthly amount. Couples under 25 and the support offer are not covered.",
   },
+  health_element_under_22: {
+    description:
+      "New claimants under 22 get no UC health element and are offered support instead. Shown as a range: from the claimants the model treats as new, up to every claimant under 22.",
+    whoIsAffected: "UC claimants under 22 with limited capability for work-related activity who claimed from April 2026.",
+    howItWorks:
+      "Removes the health element (£217.26 a month in 2027-28) for these claimants. The support offer that would replace it is not modelled.",
+  },
+  health_element_under_25: {
+    description: "As above, for new claimants under 25.",
+    whoIsAffected: "UC claimants under 25 with limited capability for work-related activity who claimed from April 2026.",
+    howItWorks: "As the under-22 version, with an age limit of 25.",
+  },
   work_allowance_all_ages: {
     description:
       "Illustrative: UC work allowances 20% higher (£530.33 and £881.82 a month) for all ages, as a stand-in for a youth work allowance.",

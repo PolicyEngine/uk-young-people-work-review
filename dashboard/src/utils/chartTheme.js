@@ -16,13 +16,23 @@ export const CHART_COLOURS = {
   text: "#374151",
   surface: "#FFFFFF",
   highlight: "#285E61",
+  net: "#101828",
 };
 
-// Each computable measure's colour, by position in the catalogue.
-export const MEASURE_RAMP = ["#285E61", "#319795", "#4FD1C5", "#81E6D9"];
+// The measures' colour ramps, from the AB2026 dashboard (POLICY_RAMPS):
+// measures that cost the Exchequer (households gain) in teals, savings
+// (households lose) in ambers, each darkest first. Each direction's
+// measures take its steps in order of size, largest darkest; with more
+// measures than steps the steps repeat with a dash in the legend swatch,
+// and every measure is named in the legend and the tooltip.
+export const POLICY_RAMPS = {
+  cost: ["#0F766E", "#0D9488", "#14B8A6", "#2DD4BF", "#5EEAD4"],
+  saving: ["#78350F", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FBBF24"],
+};
 
-export function measureColour(index) {
-  return MEASURE_RAMP[index % MEASURE_RAMP.length];
+export function measureColour(direction, rank) {
+  const ramp = direction === "saving" ? POLICY_RAMPS.saving : POLICY_RAMPS.cost;
+  return ramp[rank % ramp.length];
 }
 
 export const WINNERS_LOSERS_SERIES = [

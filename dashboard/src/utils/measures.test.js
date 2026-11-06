@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import results from "../../public/data/results.json";
 import { ageBandRows } from "../components/AgeBandChart";
 import { waterfallRows, wrapLabel } from "../components/WaterfallChart";
-import { catalogue, formatMillions, formatPounds, toCsv, totalByYear } from "./measures";
+import { costRows } from "../components/BudgetaryImpactChart";
+import { decileRows } from "../components/DistributionalChart";
+import { catalogue, fiscalShort, formatMillions, formatPounds, headlineIds, packageFor, toCsv, totalByYear } from "./measures";
 
 describe("measure utils", () => {
   it("gives a colour to computable measures only", () => {
@@ -20,6 +22,46 @@ describe("measure utils", () => {
     const rows = totalByYear(computable, results.years);
     expect(rows).toHaveLength(results.years.length);
     expect(rows[0].total).toBeCloseTo(computable.reduce((s, m) => s + m.budgetary_impact[0].value_m, 0));
+  });
+
+  it("keeps a missing year as null, never 0", () => {
+    const m = { id: "a", budgetary_impact: [{ year: 2027, value_m: 5 }] };
+    const rows = totalByYear([m], [2027, 2028]);
+    expect(rows[1].a).toBeNull();
+    expect(rows[1].incomplete).toBe(true);
+    expect(decileRows([{ id: "a", decile: [] }])[0].a).toBeNull();
+  });
+
+  it("uses the package run for the net when the selection is the package", () => {
+    const a = { id: "a", budgetary_impact: [{ year: 2027, value_m: 100 }] };
+    const b = { id: "b", budgetary_impact: [{ year: 2027, value_m: -40 }] };
+    const pkg = { members: ["a", "b"], budgetary_impact: [{ year: 2027, value_m: 55 }] };
+    expect(packageFor({ package: pkg }, ["b", "a"])).toBe(pkg);
+    expect(packageFor({ package: pkg }, ["a"])).toBeNull();
+    expect(costRows([a, b], [2027], pkg)[0].total).toBe(55);
+    expect(costRows([a, b], [2027], null)[0].total).toBe(60);
+  });
+
+  it("colours costs and savings from different ramps", () => {
+    const data = {
+      measures: [
+        { id: "c", computable: true, budgetary_impact: [{ year: 2027, value_m: 100 }] },
+        { id: "s", computable: true, budgetary_impact: [{ year: 2027, value_m: -100 }] },
+      ],
+    };
+    const [c, s] = catalogue(data);
+    expect(c.colour).not.toBe(s.colour);
+  });
+
+  it("defaults to the headline measures only", () => {
+    const ids = headlineIds(results.measures);
+    expect(ids).not.toContain("work_allowance_all_ages");
+    expect(ids).toContain("youth_standard_allowance");
+  });
+
+  it("names measures in CSV headers and shortens year ticks", () => {
+    expect(toCsv([{ a: 1 }], { a: "Measure A" }).split("\n")[0]).toBe("Measure A");
+    expect(fiscalShort(2027)).toBe("27-28");
   });
 
   it("ends the waterfall at the net total", () => {

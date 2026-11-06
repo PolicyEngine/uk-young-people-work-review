@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { catalogue } from "../utils/measures";
+import { catalogue, headlineIds } from "../utils/measures";
+import Banner, { bannerFor } from "./Banner";
 import BaselineTab from "./BaselineTab";
 import HouseholdCalculator from "./HouseholdCalculator";
 import MethodologyTab from "./MethodologyTab";
-import PlaceholderBanner from "./PlaceholderBanner";
 import PoliciesTab from "./PoliciesTab";
 import PopulationImpactTab, { SUB_VIEWS } from "./PopulationImpactTab";
 import ViewTabs from "./ViewTabs";
@@ -14,7 +14,7 @@ import ViewTabs from "./ViewTabs";
 // ?sub= and ?policies=. Each fact appears once; other tabs link to it.
 export const VIEWS = [
   { value: "impact", label: "Population impact" },
-  { value: "household", label: "Household calculator" },
+  { value: "household", label: "Example households" },
   { value: "baseline", label: "Baseline" },
   { value: "policies", label: "Policies" },
   { value: "method", label: "Methodology" },
@@ -22,12 +22,13 @@ export const VIEWS = [
 
 function readState(measures) {
   const computable = measures.filter((m) => m.computable).map((m) => m.id);
-  if (typeof window === "undefined") return { tab: "impact", sub: "cost", policies: computable };
+  const headline = headlineIds(measures);
+  if (typeof window === "undefined") return { tab: "impact", sub: "cost", policies: headline };
   const params = new URLSearchParams(window.location.search);
   const tab = VIEWS.some((v) => v.value === params.get("tab")) ? params.get("tab") : "impact";
   const sub = SUB_VIEWS.some((v) => v.value === params.get("sub")) ? params.get("sub") : "cost";
   const asked = params.get("policies")?.split(",").filter((id) => computable.includes(id));
-  return { tab, sub, policies: asked?.length ? asked : computable };
+  return { tab, sub, policies: asked?.length ? asked : headline };
 }
 
 export default function Dashboard({ data }) {
@@ -47,13 +48,13 @@ export default function Dashboard({ data }) {
 
   return (
     <main className="app-shell min-h-screen">
-      {data.status === "placeholder" && <PlaceholderBanner text={data.banner} />}
+      <Banner banner={bannerFor(data)} />
       <div className="title-row">
-        <div className="mx-auto max-w-[1200px] px-6 py-4">
+        <div className="mx-auto max-w-[1200px] px-4 py-4 sm:px-6">
           <h1>Young people and work review: costs and who would benefit</h1>
         </div>
       </div>
-      <div className="relative z-[1] mx-auto max-w-[1200px] px-6 py-8">
+      <div className="relative z-[1] mx-auto max-w-[1200px] px-4 py-8 sm:px-6">
         <ViewTabs views={VIEWS} active={state.tab} onChange={(tab) => update({ tab })} />
         {state.tab === "impact" && (
           <PopulationImpactTab
@@ -67,7 +68,7 @@ export default function Dashboard({ data }) {
           />
         )}
         {state.tab === "household" && (
-          <HouseholdCalculator households={data.households} curves={data.net_income_curves} measures={measures} />
+          <HouseholdCalculator households={data.households} curves={data.net_income_curves} measures={measures} status={data.status} />
         )}
         {state.tab === "baseline" && <BaselineTab data={data} />}
         {state.tab === "policies" && <PoliciesTab measures={measures} />}

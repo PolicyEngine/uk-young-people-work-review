@@ -1,45 +1,65 @@
-import { formatPounds } from "../utils/measures";
+import { fiscalYear, formatPence } from "../utils/measures";
 import NetIncomeChart from "./NetIncomeChart";
 
-// Preset households, precomputed by the pipeline. In the template the values
-// are an arithmetic sketch of monthly UC; the real calculator runs the full
-// model, and presets marked full model only show no figure until then.
-export default function HouseholdCalculator({ households, curves, measures }) {
+// Example households, precomputed by the pipeline: from the full model in
+// model mode, from a placeholder sketch of monthly UC in the template. Each
+// row names only the measures that change it.
+export default function HouseholdCalculator({ households, curves, measures, status }) {
   const computable = measures.filter((m) => m.computable);
+  const byId = Object.fromEntries(computable.map((m) => [m.id, m]));
+  const sketch = households.some((h) => h.source === "sketch");
+  const year = households[0]?.year;
   return (
     <div className="tab-body">
       <section className="panel mb-6">
         <h3 className="m-0 mb-1 text-lg font-semibold">Example young people</h3>
         <p className="m-0 mb-4 text-sm text-slate-500">
-          Monthly Universal Credit under current law and each modelled measure, 2027-28. Placeholder arithmetic.
+          Monthly Universal Credit{sketch ? "" : " and net income"} under current law and each measure that changes it{year ? `, ${fiscalYear(year)}` : ""}.
+          {sketch ? " Placeholder arithmetic covering UC only; the full model replaces it on the day." : ""}
+          {status === "mock" ? " MOCK drill figures." : ""}
         </p>
-        <div className="overflow-x-auto">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Household</th>
-                <th>Current law</th>
-                {computable.map((m) => (
-                  <th key={m.id}>{m.name}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {households.map((h) => (
-                <tr key={h.id} data-testid={`household-${h.id}`}>
-                  <td>{h.label}</td>
-                  <td>{h.full_model_only ? "Full model on the day" : formatPounds(h.baseline_uc_monthly)}</td>
-                  {computable.map((m) => (
-                    <td key={m.id}>{h.full_model_only ? "" : formatPounds(h.reform_uc_monthly[m.id])}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid gap-4 md:grid-cols-2">
+          {households.map((h) => (
+            <article key={h.id} className="metric-card" data-testid={`household-${h.id}`}>
+              <h4 className="m-0 text-base font-semibold text-slate-800">{h.label}</h4>
+              {h.full_model_only && h.baseline_uc_monthly === null ? (
+                <p className="m-0 mt-2 text-sm text-slate-600">Full model on the day</p>
+              ) : (
+                <dl className="m-0 mt-2 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 text-sm">
+                  <dt className="text-slate-600">UC under current law</dt>
+                  <dd className="m-0 text-right font-semibold">{formatPence(h.baseline_uc_monthly)} a month</dd>
+                  {h.baseline_net_income_monthly !== undefined && (
+                    <>
+                      <dt className="text-slate-600">Net income under current law</dt>
+                      <dd className="m-0 text-right font-semibold">{formatPence(h.baseline_net_income_monthly)} a month</dd>
+                    </>
+                  )}
+                  {(h.changed_by ?? []).map((mid) => {
+                    const change = h.reform_uc_monthly[mid] - h.baseline_uc_monthly;
+                    const netChange =
+                      h.reform_net_income_monthly && h.baseline_net_income_monthly !== undefined
+                        ? h.reform_net_income_monthly[mid] - h.baseline_net_income_monthly
+                        : null;
+                    return (
+                      <div key={mid} className="contents">
+                        <dt className="text-slate-600">{byId[mid]?.name ?? mid}</dt>
+                        <dd className="m-0 text-right">
+                          UC {change >= 0 ? "+" : ""}
+                          {formatPence(change)}
+                          {netChange !== null && `; net income ${netChange >= 0 ? "+" : ""}${formatPence(netChange)}`} a month
+                        </dd>
+                      </div>
+                    );
+                  })}
+                  {(h.changed_by ?? []).length === 0 && <dd className="col-span-2 m-0 text-slate-600">No change under any modelled measure.</dd>}
+                </dl>
+              )}
+            </article>
+          ))}
         </div>
       </section>
       {curves.map((curve) => (
-        <NetIncomeChart key={curve.preset} curve={curve} measures={computable} />
+        <NetIncomeChart key={curve.preset} curve={curve} measures={computable} sketch={sketch} />
       ))}
     </div>
   );

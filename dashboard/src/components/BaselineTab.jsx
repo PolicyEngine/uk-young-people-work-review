@@ -21,7 +21,7 @@ export default function BaselineTab({ data }) {
               <tr key={row.period}>
                 <td>{row.period}</td>
                 <td>{row.neet_k === null ? "n/a" : `${row.neet_k.toLocaleString("en-GB")}k`}</td>
-                <td>{row.neet_rate_pct === null ? "n/a" : `${row.neet_rate_pct}%`}</td>
+                <td>{row.neet_rate_pct === null ? "n/a" : `${row.neet_rate_pct.toFixed(1)}%`}</td>
               </tr>
             ))}
           </tbody>
@@ -29,7 +29,8 @@ export default function BaselineTab({ data }) {
       </section>
       <section className="panel">
         <h3 className="m-0 mb-1 text-lg font-semibold">Young people on the UC health element and PIP</h3>
-        <p className="m-0 mb-4 text-sm text-slate-500">{context.young_claimants_source}. The modelled baseline is added on the day.</p>
+        <p className="m-0 mb-4 text-sm text-slate-500">{context.young_claimants_source}. The modelled counts for the same group are added beside these once the full model has run.</p>
+        <div className="overflow-x-auto">
         <table className="data-table compact">
           <thead>
             <tr>
@@ -52,6 +53,7 @@ export default function BaselineTab({ data }) {
             ))}
           </tbody>
         </table>
+        </div>
       </section>
     </div>
   );
