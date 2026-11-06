@@ -61,3 +61,32 @@ def test_net_income_curve_rises_with_hours():
     assert [r["hours"] for r in rows] == CURVE_HOURS
     nets = [r["net_monthly"] for r in rows]
     assert nets == sorted(nets)
+
+
+def test_cli_household_defaults_to_the_first_policy_year():
+    from young_people_work.household import calculate
+
+    assert calculate.__defaults__[-1] == 2027
+
+
+def test_household_row_becomes_a_preset():
+    from young_people_work.household import row_to_preset
+
+    preset, year = row_to_preset(
+        {"id": "h1", "age": "21", "lcwra": "yes", "new_claimant": "true", "year": "2028"}
+    )
+    assert (preset["age"], preset["lcwra"], preset["new_claimant"], year) == (21, True, True, 2028)
+    with pytest.raises(ValueError, match="Unknown"):
+        row_to_preset({"id": "h2", "age": "20", "colour": "red"})
+
+
+def test_lcwra_presets_say_which_rate_they_get():
+    situation = to_situation(PRESETS_BY_ID["single_20_new_health_element"], 2027)
+    assert situation["benunits"]["benunit"]["uc_receives_new_claimant_health_element"] == {
+        "2027": True
+    }
+
+
+def test_sketch_applies_the_health_element_age_test():
+    preset = PRESETS_BY_ID["single_20_new_health_element"]
+    assert uc_monthly(preset, health_min_age=22) == pytest.approx(353.17)
