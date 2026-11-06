@@ -6,6 +6,7 @@ from young_people_work import data_limits, model_limits
 from young_people_work.measure_templates import (
     REGISTERED_TEMPLATES,
     DataLimitedWarning,
+    ModelLimitedWarning,
     merge,
     rate_change,
     threshold_change,
@@ -15,7 +16,22 @@ WA = "gov.dwp.universal_credit.means_test.work_allowance.with_housing"
 
 
 def test_registered_templates():
-    assert REGISTERED_TEMPLATES == ("rate_change", "threshold_change")
+    assert REGISTERED_TEMPLATES == ("rate_change", "threshold_change", "uc_health_element_change")
+
+
+def test_uc_health_element_change_only_in_rebalanced_years():
+    from young_people_work.measure_templates import UC_PROTECTED_HEALTH, uc_health_element_change
+
+    assert uc_health_element_change(protected={2027: 400}) == {UC_PROTECTED_HEALTH: {"2027": 400.0}}
+    with pytest.raises(ValueError, match="would score nothing"):
+        uc_health_element_change(protected={2040: 400})
+    with pytest.raises(ValueError):
+        uc_health_element_change()
+
+
+def test_health_element_amount_refused_in_rebalanced_years():
+    with pytest.raises(ValueError, match="scores nothing"):
+        rate_change("gov.dwp.universal_credit.elements.disabled.amount", {2027: 100})
 
 
 def test_rate_change_keys_by_bare_year():
@@ -24,9 +40,11 @@ def test_rate_change_keys_by_bare_year():
 
 
 def test_paths_with_enum_keys_and_brackets():
-    rate_change("gov.dwp.universal_credit.standard_allowance.amount.SINGLE_YOUNG", {2027: 300})
+    with pytest.warns(ModelLimitedWarning):
+        rate_change("gov.dwp.universal_credit.standard_allowance.amount.SINGLE_YOUNG", {2027: 300})
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DataLimitedWarning)
+        warnings.simplefilter("ignore", ModelLimitedWarning)
         rate_change("gov.hmrc.minimum_wage.non_apprentice[1].amount", {2027: 12})
 
 
@@ -70,9 +88,13 @@ def test_merge_refuses_duplicates():
 def test_data_limits_live():
     keys = {limit.key for limit in data_limits.LIMITS}
     assert "minimum_wage_does_not_reach_pay" in keys
-    assert {"has_ever_worked", "neet_status", "wca_outcome", "is_care_leaver", "is_apprentice"} <= set(
-        data_limits.MISSING_INPUTS
-    )
+    assert {
+        "has_ever_worked",
+        "neet_status",
+        "wca_outcome",
+        "is_care_leaver",
+        "is_apprentice",
+    } <= set(data_limits.MISSING_INPUTS_BY_KEY)
     assert data_limits.limits_for_paths(["gov.hmrc.minimum_wage.apprentice"])
     assert not data_limits.limits_for_paths([WA])
     assert not data_limits.is_only_data_limited([])
@@ -84,8 +106,12 @@ def test_model_limits_cover_the_known_gaps():
 
     assert keys("gov.dwp.universal_credit.elements.disabled.amount") == ["health_element_shadowed"]
     assert keys(WA) == ["no_age_dimension_in_uc_means_test"]
-    assert keys("gov.hmrc.minimum_wage.non_apprentice[1].amount") == ["minimum_wage_2027_out_of_date"]
+    assert keys("gov.hmrc.minimum_wage.non_apprentice[1].amount") == [
+        "minimum_wage_2027_out_of_date"
+    ]
     assert keys(
         "gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group"
     ) == ["employer_nics_zero_rate_missing"]
-    assert model_limits.limits_for_paths([model_limits.variable_path("uc_limited_capability_for_WRA")])
+    assert model_limits.limits_for_paths(
+        [model_limits.variable_path("uc_limited_capability_for_WRA")]
+    )
