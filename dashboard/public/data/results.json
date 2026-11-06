@@ -1961,13 +1961,13 @@
     {
       "key": "is_care_leaver",
       "missing_input": "is_care_leaver",
-      "reason": "No survey source records who has left care, so the data have no care-leaver flag and the shared accommodation rate exceptions for care leavers are not observed. Care leavers appear in example households only.",
+      "reason": "The survey does not record who has left care, so the data have no care-leaver flag and the shared accommodation rate exceptions for care leavers are not observed. Care leavers could be shown only as example households.",
       "issue": 5
     },
     {
       "key": "is_apprentice",
       "missing_input": "is_apprentice",
-      "reason": "No apprentice flag in the pinned national build. Later builds impute apprentices among employees aged 21 to 24 to size the employer National Insurance relief, from a small number of survey records, so effects on apprentices alone are shown in example households, not as national totals.",
+      "reason": "No apprentice flag in the pinned national build. Later builds impute apprentices among employees aged 21 to 24 to size the employer National Insurance relief, from a small number of survey records, so effects on apprentices alone could be shown only as example households, not as national totals.",
       "issue": 6
     },
     {

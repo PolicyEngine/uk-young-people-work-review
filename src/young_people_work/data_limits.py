@@ -98,10 +98,10 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
     ),
     MissingInput(
         "is_care_leaver",
-        "No survey source records who has left care, so the data have no "
+        "The survey does not record who has left care, so the data have no "
         "care-leaver flag and the shared accommodation rate exceptions for care "
-        "leavers are not observed. Care leavers appear in example households "
-        "only.",
+        "leavers are not observed. Care leavers could be shown only as example "
+        "households.",
         5,
     ),
     MissingInput(
@@ -109,8 +109,8 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
         "No apprentice flag in the pinned national build. Later builds impute "
         "apprentices among employees aged 21 to 24 to size the employer National "
         "Insurance relief, from a small number of survey records, so effects on "
-        "apprentices alone are shown in example households, not as national "
-        "totals.",
+        "apprentices alone could be shown only as example households, not as "
+        "national totals.",
         6,
     ),
     MissingInput(
