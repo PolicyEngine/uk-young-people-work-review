@@ -8,8 +8,8 @@ The table is generated from `src/young_people_work/reforms.py`; edit the registr
 |---|---|---|---|---|---|---|
 | `youth_standard_allowance` | Lower youth standard allowance (illustrative) | High | dashboard-param (placeholder) | UK | none | #4 |
 | `youth_route_never_worked` | Youth route for those who have never worked | High | not-computable | UK | `has_ever_worked`, `neet_status` | #4, #7 |
-| `health_element_under_22` | No UC health element under 22 | High | needs-pe-uk-first | UK | `wca_outcome` | #2, #3 |
-| `health_element_under_25` | No UC health element under 25 | Medium | needs-pe-uk-first | UK | `wca_outcome` | #2, #3 |
+| `health_element_under_22` | No UC health element for new claimants under 22 | High | dashboard-structural | UK | `wca_outcome` | #2, #3 |
+| `health_element_under_25` | No UC health element for new claimants under 25 | Medium | dashboard-structural | UK | `wca_outcome` | #2, #3 |
 | `limited_capability_for_work_payment` | Payment for limited capability for work | Medium | needs-pe-uk-first | UK | `wca_outcome` | #3 |
 | `work_allowance_all_ages` | Higher work allowances (illustrative) | Medium | dashboard-param (placeholder) | UK | none |  |
 | `youth_guarantee` | Guarantee of work, training or an apprenticeship | High | ledger | UK | `neet_status` | #7 |
