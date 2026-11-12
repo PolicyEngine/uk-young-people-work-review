@@ -10,13 +10,13 @@ a figure until it is replaced by the report's own proposal and reconciled.
 
 Every measure is compared against current law in the installed
 policyengine-uk. Year Y is fiscal year Y-(Y+1). Values are 2027-28 values in
-policyengine-uk 2.151.0, held flat over the policy years in the placeholders;
+policyengine-uk 2.174.1, held flat over the policy years in the placeholders;
 on the day each measure follows the uprated path. Measures change parameters
 (``parameter_changes``, built from ``measure_templates``) or apply a modifier
 from ``young_people_work.measures``, one module each; no modifier may live
 here.
 
-Routes (see ``docs/METHOD.md``): four placeholder parameter changes and two
+Routes (see ``docs/METHOD.md``): five placeholder parameter changes and two
 structural modifiers (an age test on the UC health element) are computable
 today. The rest are routed to the ledger (spending lines), not
 computable (a data limit) or needs-pe-uk-first, with the reason shown on the
@@ -44,8 +44,11 @@ LHA_SAR_AGE = "gov.dwp.LHA.shared_accommodation_age_threshold"
 UC_QYP = f"{UC}.elements.child.eligibility.qualifying_young_person_age_limit"
 CB_QYP = "gov.hmrc.child_benefit.eligibility.qualifying_young_person_age_limit"
 MW_18_20 = "gov.hmrc.minimum_wage.non_apprentice[1].amount"
+NI_UNDER_21_AGE = (
+    "gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group"
+)
 
-# 2027-28 values in policyengine-uk 2.151.0 (monthly for UC, hourly for the
+# 2027-28 values in policyengine-uk 2.174.1 (monthly for UC, hourly for the
 # minimum wage, years of age for age limits).
 CURRENT_VALUES = {
     f"{SA}.SINGLE_YOUNG": 353.17,
@@ -57,11 +60,12 @@ CURRENT_VALUES = {
     LHA_SAR_AGE: 35,
     UC_QYP: 20,
     CB_QYP: 20,
-    "gov.hmrc.minimum_wage.non_apprentice[1].amount": 10.85,
-    "gov.hmrc.minimum_wage.non_apprentice[2].amount": 12.71,
+    "gov.hmrc.minimum_wage.non_apprentice[1].amount": 11.27,
+    "gov.hmrc.minimum_wage.non_apprentice[2].amount": 13.21,
+    NI_UNDER_21_AGE: 21,
 }
 
-# Current-law paths by fiscal year in policyengine-uk 2.151.0. Checked against
+# Current-law paths by fiscal year in policyengine-uk 2.174.1. Checked against
 # the installed engine by tests/test_model_engine.py, so a pin move that
 # changes them fails there and they are re-read at G0.
 # - The protected UC health element (pre-2026 claimants), monthly: the
@@ -72,9 +76,9 @@ PROTECTED_HEALTH_ELEMENT = {
     2029: 454.36556455699156,
     2030: 463.4519296255613,
 }
-# - The minimum wage for 21 and over, hourly (held flat in 2.151.0; from
-#   2.168.0 it is £13.21 in 2027 and rises after).
-NATIONAL_LIVING_WAGE = {2027: 12.71, 2028: 12.71, 2029: 12.71, 2030: 12.71}
+# - The minimum wage for 21 and over, hourly: the April 2027 rate Budget 2026
+#   announced, then the engine's projection on the OBR's October 2026 EFO.
+NATIONAL_LIVING_WAGE = {2027: 13.21, 2028: 13.51, 2029: 13.85, 2030: 14.23}
 
 
 def _every_year(value: float) -> dict[int, float]:
@@ -265,12 +269,17 @@ REFORMS: list[Reform] = [
         ),
         recommendation="Lower the cost of hiring young people",
         likelihood=Likelihood.MEDIUM,
-        route=Route.NEEDS_PE_UK_FIRST,
+        route=Route.DASHBOARD_PARAM,
         route_reason=(
-            "The pinned model version does not include the employer zero rate "
-            "for young employees, so the extension cannot be costed until the "
-            "model is updated."
+            "The age limit for the employer zero rate is a parameter. The "
+            "modelled relief for employees under 21 is below HMRC's estimate, "
+            "so the extension is checked against HMRC's figures before it is "
+            "published. Employment effects are not modelled."
         ),
+        parameter_changes=threshold_change(NI_UNDER_21_AGE, _every_year(25)),
+        data_needs=["employees_under_21", "hiring_flows"],
+        # The model passes the employer saving on to pay, profits and prices,
+        # so households of every age can gain: no age band is ruled out.
         issues=[1, 6],
     ),
     Reform(

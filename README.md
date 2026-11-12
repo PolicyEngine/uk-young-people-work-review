@@ -26,12 +26,12 @@ The review is expected to set out principles and recommendations rather than cos
 
 | Item | Version |
 |---|---|
-| policyengine | 6.11.1 (`policyengine[uk]`) |
-| policyengine-uk | 2.151.0 |
+| policyengine | 6.17.2 (`policyengine[uk]`) |
+| policyengine-uk | 2.174.1 |
 | policyengine-core | 3.33.3 |
-| Dataset | Microcosm UK 2024-25 national build `20261025T091414Z-a6299504` (SHA-256 `b96a8cd6...064e`, certified with this bundle) |
+| Dataset | Microcosm UK 2024-25 national build `20261107T020434Z-eeb6093e` (SHA-256 `0a9b77db...1f25`, certified with this bundle) |
 
-policyengine 6.14.0 pins the same policyengine-uk and dataset, so 6.11.1 (the version the AB2026 dashboard uses) gives the same results. The pinned engine does not yet model the employer National Insurance zero rate for under-21s (policyengine-uk 2.165.1 does) or the April 2027 minimum wage rates (2.168.0), so the pin is reviewed before the event (#1). Versions will be frozen and recorded before the event. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
+The pinned engine models the employer National Insurance zero rate for employees under 21 and relevant apprentices under 25, and carries the published April 2027 minimum wage rates (#1). Versions will be frozen and recorded before the event. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
 
 ## Licence
 
@@ -45,7 +45,7 @@ make test lint                            # pytest, vitest, ruff, eslint
 uv run young-people-work generate         # data/results.json and the dashboard copy (placeholder mode)
 make guard                                # public data guard
 
-make install-model                        # adds policyengine[uk]==6.11.1
+make install-model                        # adds policyengine[uk]==6.17.2
 uv run young-people-work household single_20_new_health_element --reform health_element_under_22
 make model                                # full model, one measure per process, under /tmp/pe-heavy.lock
 make build                                # local production build (heavy)

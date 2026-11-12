@@ -14,7 +14,7 @@ The table is generated from `src/young_people_work/reforms.py`; edit the registr
 | `work_allowance_all_ages` | Higher work allowances (illustrative) | Medium | dashboard-param (placeholder) | UK | none |  |
 | `youth_guarantee` | Guarantee of work, training or an apprenticeship | High | ledger | UK | `neet_status` | #7 |
 | `local_participation_funding` | Local participation system | High | ledger | England | none |  |
-| `employer_nics_under_25` | Employer NICs zero rate to age 25 | Medium | needs-pe-uk-first | UK | none | #1, #6 |
+| `employer_nics_under_25` | Employer NICs zero rate to age 25 | Medium | dashboard-param (placeholder) | UK | `employees_under_21`, `hiring_flows` | #1, #6 |
 | `youth_minimum_wage` | 18-20 minimum wage at the National Living Wage (illustrative) | Low | not-computable | UK | `hiring_flows` | #1 |
 | `apprenticeship_incentives` | Apprenticeship incentives for employers | Medium | ledger | England | `is_apprentice` | #6 |
 | `family_benefits_in_training` | Family support for young people in training to 21 (illustrative) | Low | dashboard-param (placeholder) | UK | none |  |
@@ -27,14 +27,14 @@ The table is generated from `src/young_people_work/reforms.py`; edit the registr
 
 ## Ranges to have ready
 
-| Lever | Parameter (policyengine-uk) | Current 2027-28 value (2.151.0) | Range to prepare |
+| Lever | Parameter (policyengine-uk) | Current 2027-28 value (2.174.1) | Range to prepare |
 |---|---|---|---|
 | Youth standard allowance | `gov.dwp.universal_credit.standard_allowance.amount.SINGLE_YOUNG` (and `COUPLE_YOUNG`) | £353.17 a month | 70% to 100% |
 | Age band for a youth route | needs a new age parameter (#2) | 25 (`claimant_type.age_threshold`) | 18-21, 18-24 |
 | Health element for young claimants | needs an age parameter (#2) | £217.26 a month for new claimants | £0 to £217.26; age 22 or 25; protected claimants in or out |
 | Work allowances | `gov.dwp.universal_credit.means_test.work_allowance.*` | £441.94 / £734.85 a month | up to about £1,000 |
 | Taper | `gov.dwp.universal_credit.means_test.reduction_rate` | 55% | 45% to 55% (youth-only needs an age dimension) |
-| Employer NICs zero rate | `gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group` (2.175.x only, #1) | 21 | 21 to 25 |
+| Employer NICs zero rate | `gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group` (apprentices: `.relevant_apprentice`, 25) | 21 | 21 to 25 |
 | Qualifying young person age limit | `...qualifying_young_person_age_limit` (UC, Child Benefit, CTC, Pension Credit) | 20 | 20 to 21 |
 | Shared accommodation rate age | `gov.dwp.LHA.shared_accommodation_age_threshold` | 35 | 25 to 35 |
 | Learning allowance | new variable | none | £30 to £60 a week, income test £20,000 to £35,000 |

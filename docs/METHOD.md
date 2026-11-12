@@ -35,7 +35,7 @@ From 2026-27 the engine's UC rebalancing sets each claimant's health element its
 
 ## What the data hold
 
-Age, employment status, education and approved training, earnings, hours, reported UC, disability-benefit receipt and PIP award categories. Not held: work history (#4), NEET status (proxy only, #7), Work Capability Assessment outcome (LCWRA follows disability-benefit receipt, #3), care-leaver status (#5), an apprentice flag in the pinned build (#6), employer records and hiring flows.
+Age, employment status, education and approved training, earnings, hours, reported UC, disability-benefit receipt and PIP award categories. Not held: work history (#4), NEET status (proxy only, #7), Work Capability Assessment outcome (LCWRA follows disability-benefit receipt, #3), care-leaver status (#5), employer records and hiring flows. The apprentice flag in the pinned build is imputed from a small number of survey records (#6).
 
 ## NEET proxy
 

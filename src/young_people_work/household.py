@@ -32,8 +32,8 @@ from typing import Any
 from young_people_work.reforms import CURRENT_VALUES, SA, UC, WA
 from young_people_work.years import POLICY_YEARS
 
-# Published April 2027 hourly rate for ages 18 to 20. The pinned engine holds
-# £10.85 (issue #1); the arithmetic uses the published rate.
+# Published April 2027 hourly rate for ages 18 to 20, as the pinned engine
+# (policyengine-uk 2.174.1) holds it.
 WAGE_18_20_2027 = 11.27
 PERSONAL_ALLOWANCE = 12_570
 BASIC_RATE = 0.20

@@ -3,11 +3,11 @@
   "status": "placeholder",
   "banner": "Pre-release template: placeholder figures, not PolicyEngine estimates",
   "engine": {
-    "policyengine": "6.11.1",
-    "policyengine_uk": "2.151.0",
+    "policyengine": "6.17.2",
+    "policyengine_uk": "2.174.1",
     "policyengine_core": "3.33.3",
-    "dataset": "microcosm-uk-2024-25-national-20261025T091414Z-a6299504",
-    "dataset_sha256": "b96a8cd625b645a409c063b1de5158532708a2f0d3c3897a794a8fb0bbd5064e",
+    "dataset": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
+    "dataset_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
     "validated_pair": true
   },
   "basis": {
@@ -959,12 +959,15 @@
       "name": "Employer NICs zero rate to age 25",
       "description": "Extend the employer National Insurance zero rate from employees under 21 to employees under 25, up to the upper secondary threshold.",
       "recommendation": "Lower the cost of hiring young people",
-      "route": "needs-pe-uk-first",
-      "route_reason": "The pinned model version does not include the employer zero rate for young employees, so the extension cannot be costed until the model is updated.",
+      "route": "dashboard-param",
+      "route_reason": "The age limit for the employer zero rate is a parameter. The modelled relief for employees under 21 is below HMRC's estimate, so the extension is checked against HMRC's figures before it is published. Employment effects are not modelled.",
       "placeholder": true,
-      "computable": false,
+      "computable": true,
       "publishable": false,
-      "data_needs": [],
+      "data_needs": [
+        "employees_under_21",
+        "hiring_flows"
+      ],
       "issues": [
         1,
         6
@@ -973,14 +976,186 @@
       "in_headline": true,
       "age_bands_reached": null,
       "official_cost": [],
-      "parameters": [],
-      "status": "needs-pe-uk-first",
-      "receipt": "54e893672db9ce4c07e4ee642acb8a07f64f7813de3acae0df8bd1d2b18a5f60",
-      "budgetary_impact": null,
-      "decile": null,
-      "winners_losers": null,
-      "age_band": null,
-      "people_affected_k": null
+      "parameters": [
+        "gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group"
+      ],
+      "status": "held-placeholder",
+      "receipt": "c3323fff5de1f1c897548531589b237d1869b17d4f7bf0e8dbc224afb4a6cd3e",
+      "budgetary_impact": [
+        {
+          "year": 2027,
+          "fiscal_year": "2027-28",
+          "value_m": 789.0
+        },
+        {
+          "year": 2028,
+          "fiscal_year": "2028-29",
+          "value_m": 820.0
+        },
+        {
+          "year": 2029,
+          "fiscal_year": "2029-30",
+          "value_m": 852.0
+        },
+        {
+          "year": 2030,
+          "fiscal_year": "2030-31",
+          "value_m": 883.0
+        }
+      ],
+      "decile": [
+        {
+          "decile": 1,
+          "avg_change_gbp": 51.0,
+          "pct_change": 0.27
+        },
+        {
+          "decile": 2,
+          "avg_change_gbp": 57.0,
+          "pct_change": 0.17
+        },
+        {
+          "decile": 3,
+          "avg_change_gbp": 20.0,
+          "pct_change": 0.13
+        },
+        {
+          "decile": 4,
+          "avg_change_gbp": 18.0,
+          "pct_change": 0.2
+        },
+        {
+          "decile": 5,
+          "avg_change_gbp": 18.0,
+          "pct_change": 0.13
+        },
+        {
+          "decile": 6,
+          "avg_change_gbp": 20.0,
+          "pct_change": 0.05
+        },
+        {
+          "decile": 7,
+          "avg_change_gbp": 24.0,
+          "pct_change": 0.09
+        },
+        {
+          "decile": 8,
+          "avg_change_gbp": 8.0,
+          "pct_change": 0.04
+        },
+        {
+          "decile": 9,
+          "avg_change_gbp": 9.0,
+          "pct_change": 0.02
+        },
+        {
+          "decile": 10,
+          "avg_change_gbp": 5.0,
+          "pct_change": 0.02
+        }
+      ],
+      "winners_losers": [
+        {
+          "decile": 1,
+          "gain_more_5": 1.8,
+          "gain_less_5": 7.8,
+          "no_change": 90.4,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 2,
+          "gain_more_5": 0.2,
+          "gain_less_5": 7.5,
+          "no_change": 92.3,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 3,
+          "gain_more_5": 1.6,
+          "gain_less_5": 4.2,
+          "no_change": 94.2,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 4,
+          "gain_more_5": 0.4,
+          "gain_less_5": 5.4,
+          "no_change": 94.2,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 5,
+          "gain_more_5": 0.6,
+          "gain_less_5": 5.5,
+          "no_change": 93.9,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 6,
+          "gain_more_5": 1.4,
+          "gain_less_5": 2.9,
+          "no_change": 95.7,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 7,
+          "gain_more_5": 0.0,
+          "gain_less_5": 3.4,
+          "no_change": 96.6,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 8,
+          "gain_more_5": 1.2,
+          "gain_less_5": 1.7,
+          "no_change": 97.1,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 9,
+          "gain_more_5": 0.1,
+          "gain_less_5": 0.7,
+          "no_change": 99.2,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        },
+        {
+          "decile": 10,
+          "gain_more_5": 0.4,
+          "gain_less_5": 0.4,
+          "no_change": 99.2,
+          "lose_less_5": 0.0,
+          "lose_more_5": 0.0
+        }
+      ],
+      "age_band": [
+        {
+          "age_band": "16-17",
+          "avg_change_gbp": 21.0
+        },
+        {
+          "age_band": "18-20",
+          "avg_change_gbp": 329.0
+        },
+        {
+          "age_band": "21-24",
+          "avg_change_gbp": 121.0
+        },
+        {
+          "age_band": "25 and over",
+          "avg_change_gbp": 14.0
+        }
+      ],
+      "people_affected_k": 473.0
     },
     {
       "id": "youth_minimum_wage",
@@ -1006,7 +1181,7 @@
         "gov.hmrc.minimum_wage.non_apprentice[1].amount"
       ],
       "status": "not-computable",
-      "receipt": "3e1754aa4556dc4807b490e3a20bdaa4d7ea933fadafb6555d0104a8d55ed9bc",
+      "receipt": "039ba18ae2a0d54946b3ccc0fdfe6278224c4ccd88c4590e65078acbffca7008",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -1629,6 +1804,7 @@
         "health_element_under_22": 353.17,
         "health_element_under_25": 353.17,
         "work_allowance_all_ages": 353.17,
+        "employer_nics_under_25": 353.17,
         "family_benefits_in_training": 353.17,
         "shared_accommodation_age_25": 353.17
       },
@@ -1648,6 +1824,7 @@
         "health_element_under_22": 353.17,
         "health_element_under_25": 353.17,
         "work_allowance_all_ages": 570.43,
+        "employer_nics_under_25": 570.43,
         "family_benefits_in_training": 570.43,
         "shared_accommodation_age_25": 570.43
       },
@@ -1669,6 +1846,7 @@
         "health_element_under_22": 1070.43,
         "health_element_under_25": 853.17,
         "work_allowance_all_ages": 1070.43,
+        "employer_nics_under_25": 1070.43,
         "family_benefits_in_training": 1070.43,
         "shared_accommodation_age_25": 1070.43
       },
@@ -1689,6 +1867,7 @@
         "health_element_under_22": 84.57,
         "health_element_under_25": 84.57,
         "work_allowance_all_ages": 84.57,
+        "employer_nics_under_25": 84.57,
         "family_benefits_in_training": 84.57,
         "shared_accommodation_age_25": 84.57
       },
@@ -1708,6 +1887,7 @@
         "health_element_under_22": null,
         "health_element_under_25": null,
         "work_allowance_all_ages": null,
+        "employer_nics_under_25": null,
         "family_benefits_in_training": null,
         "shared_accommodation_age_25": null
       },
@@ -1725,6 +1905,7 @@
         "health_element_under_22": null,
         "health_element_under_25": null,
         "work_allowance_all_ages": null,
+        "employer_nics_under_25": null,
         "family_benefits_in_training": null,
         "shared_accommodation_age_25": null
       },
@@ -1744,6 +1925,7 @@
           "health_element_under_22": 353.17,
           "health_element_under_25": 353.17,
           "work_allowance_all_ages": 353.17,
+          "employer_nics_under_25": 353.17,
           "family_benefits_in_training": 353.17,
           "shared_accommodation_age_25": 353.17
         },
@@ -1754,6 +1936,7 @@
           "health_element_under_22": 463.05,
           "health_element_under_25": 463.05,
           "work_allowance_all_ages": 463.05,
+          "employer_nics_under_25": 463.05,
           "family_benefits_in_training": 463.05,
           "shared_accommodation_age_25": 463.05
         },
@@ -1764,6 +1947,7 @@
           "health_element_under_22": 572.94,
           "health_element_under_25": 572.94,
           "work_allowance_all_ages": 572.94,
+          "employer_nics_under_25": 572.94,
           "family_benefits_in_training": 572.94,
           "shared_accommodation_age_25": 572.94
         },
@@ -1774,6 +1958,7 @@
           "health_element_under_22": 732.55,
           "health_element_under_25": 732.55,
           "work_allowance_all_ages": 732.55,
+          "employer_nics_under_25": 732.55,
           "family_benefits_in_training": 732.55,
           "shared_accommodation_age_25": 732.55
         },
@@ -1784,6 +1969,7 @@
           "health_element_under_22": 976.73,
           "health_element_under_25": 976.73,
           "work_allowance_all_ages": 976.73,
+          "employer_nics_under_25": 976.73,
           "family_benefits_in_training": 976.73,
           "shared_accommodation_age_25": 976.73
         },
@@ -1794,6 +1980,7 @@
           "health_element_under_22": 1172.36,
           "health_element_under_25": 1172.36,
           "work_allowance_all_ages": 1172.36,
+          "employer_nics_under_25": 1172.36,
           "family_benefits_in_training": 1172.36,
           "shared_accommodation_age_25": 1172.36
         },
@@ -1804,6 +1991,7 @@
           "health_element_under_22": 1348.17,
           "health_element_under_25": 1348.17,
           "work_allowance_all_ages": 1348.17,
+          "employer_nics_under_25": 1348.17,
           "family_benefits_in_training": 1348.17,
           "shared_accommodation_age_25": 1348.17
         },
@@ -1814,6 +2002,7 @@
           "health_element_under_22": 1523.98,
           "health_element_under_25": 1523.98,
           "work_allowance_all_ages": 1523.98,
+          "employer_nics_under_25": 1523.98,
           "family_benefits_in_training": 1523.98,
           "shared_accommodation_age_25": 1523.98
         },
@@ -1824,6 +2013,7 @@
           "health_element_under_22": 1699.8,
           "health_element_under_25": 1699.8,
           "work_allowance_all_ages": 1699.8,
+          "employer_nics_under_25": 1699.8,
           "family_benefits_in_training": 1699.8,
           "shared_accommodation_age_25": 1699.8
         }
@@ -1841,6 +2031,7 @@
           "health_element_under_22": 353.17,
           "health_element_under_25": 353.17,
           "work_allowance_all_ages": 570.43,
+          "employer_nics_under_25": 570.43,
           "family_benefits_in_training": 570.43,
           "shared_accommodation_age_25": 570.43
         },
@@ -1851,6 +2042,7 @@
           "health_element_under_22": 597.35,
           "health_element_under_25": 597.35,
           "work_allowance_all_ages": 814.61,
+          "employer_nics_under_25": 814.61,
           "family_benefits_in_training": 814.61,
           "shared_accommodation_age_25": 814.61
         },
@@ -1861,6 +2053,7 @@
           "health_element_under_22": 841.54,
           "health_element_under_25": 841.54,
           "work_allowance_all_ages": 1058.8,
+          "employer_nics_under_25": 1058.8,
           "family_benefits_in_training": 1058.8,
           "shared_accommodation_age_25": 1058.8
         },
@@ -1871,6 +2064,7 @@
           "health_element_under_22": 1085.72,
           "health_element_under_25": 1085.72,
           "work_allowance_all_ages": 1302.98,
+          "employer_nics_under_25": 1302.98,
           "family_benefits_in_training": 1302.98,
           "shared_accommodation_age_25": 1302.98
         },
@@ -1881,6 +2075,7 @@
           "health_element_under_22": 1196.86,
           "health_element_under_25": 1196.86,
           "work_allowance_all_ages": 1494.96,
+          "employer_nics_under_25": 1414.12,
           "family_benefits_in_training": 1414.12,
           "shared_accommodation_age_25": 1414.12
         },
@@ -1891,6 +2086,7 @@
           "health_element_under_22": 1258.19,
           "health_element_under_25": 1258.19,
           "work_allowance_all_ages": 1556.29,
+          "employer_nics_under_25": 1475.45,
           "family_benefits_in_training": 1475.45,
           "shared_accommodation_age_25": 1475.45
         },
@@ -1901,6 +2097,7 @@
           "health_element_under_22": 1348.17,
           "health_element_under_25": 1348.17,
           "work_allowance_all_ages": 1597.8,
+          "employer_nics_under_25": 1516.96,
           "family_benefits_in_training": 1516.96,
           "shared_accommodation_age_25": 1516.96
         },
@@ -1911,6 +2108,7 @@
           "health_element_under_22": 1523.98,
           "health_element_under_25": 1523.98,
           "work_allowance_all_ages": 1639.31,
+          "employer_nics_under_25": 1558.47,
           "family_benefits_in_training": 1558.47,
           "shared_accommodation_age_25": 1558.47
         },
@@ -1921,6 +2119,7 @@
           "health_element_under_22": 1699.8,
           "health_element_under_25": 1699.8,
           "work_allowance_all_ages": 1699.8,
+          "employer_nics_under_25": 1699.8,
           "family_benefits_in_training": 1699.8,
           "shared_accommodation_age_25": 1699.8
         }
@@ -1967,7 +2166,7 @@
     {
       "key": "is_apprentice",
       "missing_input": "is_apprentice",
-      "reason": "No apprentice flag in the pinned national build. Later builds impute apprentices among employees aged 21 to 24 to size the employer National Insurance relief, from a small number of survey records, so effects on apprentices alone could be shown only as example households, not as national totals.",
+      "reason": "The pinned national build imputes apprentices among employees to size the employer National Insurance relief, from a small number of survey records, so effects on apprentices alone could be shown only as example households, not as national totals.",
       "issue": 6
     },
     {
@@ -1990,16 +2189,6 @@
     }
   ],
   "model_limits": [
-    {
-      "key": "employer_nics_zero_rate_missing",
-      "reason": "The pinned model version does not include the employer National Insurance zero rate for employees under 21 or apprentices under 25, so a change to it cannot be costed until the model is updated. Later model versions (from policyengine-uk 2.165.1) include it.",
-      "issue": 1
-    },
-    {
-      "key": "minimum_wage_2027_out_of_date",
-      "reason": "The pinned model version holds the April 2027 minimum wage rates at £12.71, £10.85 and £8.00 an hour, against the published £13.21, £11.27 and £8.31. Later model versions (from policyengine-uk 2.168.0) carry the published rates.",
-      "issue": 1
-    },
     {
       "key": "health_element_shadowed",
       "reason": "From 2026-27 the model sets each claimant's UC health element directly, at the protected rate for claims made before April 2026 and the lower rate for later claims. A change to the element's own amount therefore has no effect; changes are written against the two rates, or as an age test applied before that step.",

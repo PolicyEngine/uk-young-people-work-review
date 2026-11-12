@@ -50,7 +50,7 @@ describe("Dashboard", () => {
     render(<Dashboard data={results} />);
     fireEvent.click(screen.getByRole("tab", { name: "Methodology" }));
     expect(window.location.search).toContain("tab=method");
-    expect(screen.getByTestId("replication-line")).toHaveTextContent("a6299504");
+    expect(screen.getByTestId("replication-line")).toHaveTextContent("eeb6093e");
   });
 
   it("opens the tab named in the address", () => {
