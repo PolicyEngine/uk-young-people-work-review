@@ -72,9 +72,9 @@ CURRENT_VALUES = {
 #   Universal Credit Act 2025 s. 4 floor the engine computes each year.
 PROTECTED_HEALTH_ELEMENT = {
     2027: 442.10315091966623,
-    2028: 448.01657825650784,
-    2029: 454.36556455699156,
-    2030: 463.4519296255613,
+    2028: 454.264403382262,
+    2029: 460.80433213720136,
+    2030: 470.9432961307839,
 }
 # - The minimum wage for 21 and over, hourly: the April 2027 rate Budget 2026
 #   announced, then the engine's projection on the OBR's October 2026 EFO.
