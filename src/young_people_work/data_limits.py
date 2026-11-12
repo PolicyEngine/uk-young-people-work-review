@@ -108,10 +108,14 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
     ),
     MissingInput(
         "is_apprentice",
-        "The pinned national build imputes apprentices among employees to size "
-        "the employer National Insurance relief, from a small number of survey "
-        "records, so effects on apprentices alone could be shown only as "
-        "example households, not as national totals.",
+        "The certified national build (eeb6093e) stores an apprentice flag, but "
+        "it is drawn only at ages 21 to 24, to size the employer National "
+        "Insurance relief for apprentices: about 214 to 237 records, about "
+        "130,000 people weighted. It supports a national score of that 21 to 24 "
+        "relief, which comes out about 28% short of HMRC (£0.27bn against "
+        "£0.37bn in 2024-25). It does not describe apprentices, other ages or "
+        "any area below national level, so effects on apprentices could be "
+        "shown only as example households.",
         6,
     ),
     MissingInput(

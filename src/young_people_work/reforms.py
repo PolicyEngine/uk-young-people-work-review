@@ -307,7 +307,9 @@ REFORMS: list[Reform] = [
         route=Route.LEDGER,
         route_reason=(
             "A payment to employers per apprentice; recorded as a spending line. "
-            "The pinned data have no apprentice flag."
+            "The certified build stores an apprentice flag, but it is drawn only "
+            "at ages 21 to 24 to size the employer National Insurance relief, so "
+            "it cannot count apprentices aged 16 to 24."
         ),
         data_needs=["is_apprentice"],
         issues=[6],

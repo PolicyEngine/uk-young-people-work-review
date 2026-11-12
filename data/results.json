@@ -1194,7 +1194,7 @@
       "description": "Larger payments to employers who take on apprentices aged 16 to 24.",
       "recommendation": "More apprenticeships for young people",
       "route": "ledger",
-      "route_reason": "A payment to employers per apprentice; recorded as a spending line. The pinned data have no apprentice flag.",
+      "route_reason": "A payment to employers per apprentice; recorded as a spending line. The certified build stores an apprentice flag, but it is drawn only at ages 21 to 24 to size the employer National Insurance relief, so it cannot count apprentices aged 16 to 24.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
@@ -1210,7 +1210,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "ledger",
-      "receipt": "6c3a2f24079fd5cc4ecd8161bd3b3831a3ac04c1457a0952a02513aabbf570ba",
+      "receipt": "b9933113ae2899443ac562ed5b838563bb11f6265a3281472bd87983a5560367",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -2166,7 +2166,7 @@
     {
       "key": "is_apprentice",
       "missing_input": "is_apprentice",
-      "reason": "The pinned national build imputes apprentices among employees to size the employer National Insurance relief, from a small number of survey records, so effects on apprentices alone could be shown only as example households, not as national totals.",
+      "reason": "The certified national build (eeb6093e) stores an apprentice flag, but it is drawn only at ages 21 to 24, to size the employer National Insurance relief for apprentices: about 214 to 237 records, about 130,000 people weighted. It supports a national score of that 21 to 24 relief, which comes out about 28% short of HMRC (£0.27bn against £0.37bn in 2024-25). It does not describe apprentices, other ages or any area below national level, so effects on apprentices could be shown only as example households.",
       "issue": 6
     },
     {

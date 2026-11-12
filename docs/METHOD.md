@@ -35,7 +35,7 @@ From 2026-27 the engine's UC rebalancing sets each claimant's health element its
 
 ## What the data hold
 
-Age, employment status, education and approved training, earnings, hours, reported UC, disability-benefit receipt and PIP award categories. Not held: work history (#4), NEET status (proxy only, #7), Work Capability Assessment outcome (LCWRA follows disability-benefit receipt, #3), care-leaver status (#5), employer records and hiring flows. The apprentice flag in the pinned build is imputed from a small number of survey records (#6).
+Age, employment status, education and approved training, earnings, hours, reported UC, disability-benefit receipt and PIP award categories. Not held: work history (#4), NEET status (proxy only, #7), Work Capability Assessment outcome (LCWRA follows disability-benefit receipt, #3), care-leaver status (#5), employer records and hiring flows. The pinned build (eeb6093e) stores `is_apprentice`, but as a drawn flag set only at ages 21-24 for the employer NICs apprentice relief: about 214-237 records, about 130k people weighted. It is fit for a national score of the 21-24 relief, which comes out about 28% short of HMRC (£0.27bn against £0.37bn in 2024-25). It is not fit for describing apprentices, other ages, or anything below national level (#6).
 
 ## NEET proxy
 

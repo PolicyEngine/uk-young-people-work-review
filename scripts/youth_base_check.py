@@ -92,7 +92,7 @@ def main(path: str) -> int:
     if "is_apprentice" in cols:
         rows.append(
             (
-                "Apprentices, 16-24",
+                "Apprentice flag, 16-24 (drawn at 21-24 only)",
                 total(young & cols["is_apprentice"].astype(bool)),
                 "HMRC relief claimed by 72k employers",
             )
