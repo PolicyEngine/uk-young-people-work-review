@@ -106,12 +106,12 @@ def test_model_limits_cover_the_known_gaps():
 
     assert keys("gov.dwp.universal_credit.elements.disabled.amount") == ["health_element_shadowed"]
     assert keys(WA) == ["no_age_dimension_in_uc_means_test"]
-    assert keys("gov.hmrc.minimum_wage.non_apprentice[1].amount") == [
-        "minimum_wage_2027_out_of_date"
-    ]
-    assert keys(
-        "gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group"
-    ) == ["employer_nics_zero_rate_missing"]
+    # Fixed in policyengine-uk 2.174.1 (#1): no model limit on either.
+    assert keys("gov.hmrc.minimum_wage.non_apprentice[1].amount") == []
+    assert (
+        keys("gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group")
+        == []
+    )
     assert model_limits.limits_for_paths(
         [model_limits.variable_path("uc_limited_capability_for_WRA")]
     )

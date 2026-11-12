@@ -39,7 +39,7 @@ UC_LCWRA_AMOUNT = "gov.dwp.universal_credit.elements.disabled.amount"
 UC_PROTECTED_HEALTH = "gov.dwp.universal_credit.rebalancing.protected_health_element"
 UC_NEW_CLAIMANT_HEALTH = "gov.dwp.universal_credit.rebalancing.new_claimant_health_element"
 UC_REBALANCING_ACTIVE = "gov.dwp.universal_credit.rebalancing.active"
-# policyengine-uk 2.151.0 exports REBALANCING_YEARS = range(2026, 2033). Used
+# policyengine-uk 2.174.1 exports REBALANCING_YEARS = range(2026, 2033). Used
 # when the engine is not installed; tests/test_model_engine.py checks it
 # against the installed engine.
 UC_REBALANCED_YEARS_PINNED = range(2026, 2033)

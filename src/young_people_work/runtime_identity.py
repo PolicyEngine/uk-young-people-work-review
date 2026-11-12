@@ -18,11 +18,11 @@ PACKAGES = ("policyengine", "policyengine-uk", "policyengine-core")
 # The pinned pair (uv.lock, README). tests/test_runtime_identity.py checks
 # these against uv.lock, and the model job against the installed packages.
 PINNED = {
-    "policyengine": "6.11.1",
-    "policyengine_uk": "2.151.0",
+    "policyengine": "6.17.2",
+    "policyengine_uk": "2.174.1",
     "policyengine_core": "3.33.3",
-    "dataset": "microcosm-uk-2024-25-national-20261025T091414Z-a6299504",
-    "dataset_sha256": "b96a8cd625b645a409c063b1de5158532708a2f0d3c3897a794a8fb0bbd5064e",
+    "dataset": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
+    "dataset_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
 }
 
 

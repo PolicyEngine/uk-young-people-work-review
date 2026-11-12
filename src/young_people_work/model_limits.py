@@ -22,31 +22,6 @@ class ModelLimit:
 
 LIMITS: tuple[ModelLimit, ...] = (
     ModelLimit(
-        key="employer_nics_zero_rate_missing",
-        paths=(
-            "gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits",
-            "gov.hmrc.national_insurance.class_1.thresholds.upper_secondary_threshold",
-        ),
-        reason=(
-            "The pinned model version does not include the employer National "
-            "Insurance zero rate for employees under 21 or apprentices under 25, "
-            "so a change to it cannot be costed until the model is updated. "
-            "Later model versions (from policyengine-uk 2.165.1) include it."
-        ),
-        issue=1,
-    ),
-    ModelLimit(
-        key="minimum_wage_2027_out_of_date",
-        paths=("gov.hmrc.minimum_wage",),
-        reason=(
-            "The pinned model version holds the April 2027 minimum wage rates at "
-            "£12.71, £10.85 and £8.00 an hour, against the published £13.21, "
-            "£11.27 and £8.31. Later model versions (from policyengine-uk "
-            "2.168.0) carry the published rates."
-        ),
-        issue=1,
-    ),
-    ModelLimit(
         key="health_element_shadowed",
         paths=(
             "gov.dwp.universal_credit.elements.disabled",

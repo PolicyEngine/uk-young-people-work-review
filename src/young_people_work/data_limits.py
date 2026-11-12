@@ -58,9 +58,11 @@ LIMITS: tuple[DataLimit, ...] = (
 
 # Data limits keyed by the Microcosm national build they hold for. A new
 # build is adopted only after each entry is re-checked (docs/RUNBOOK.md,
-# "Adopting a release"). a6299504 is the build policyengine 6.11.1 pins.
+# "Adopting a release"). eeb6093e is the build policyengine 6.17.2 pins;
+# both entries were re-checked on it (no PIP points columns; earnings are
+# survey inputs).
 LIMITS_BY_BUILD: dict[str, tuple[str, ...]] = {
-    "a6299504": (
+    "eeb6093e": (
         "minimum_wage_does_not_reach_pay",
         "pip_assessment_points_missing",
     ),
@@ -106,11 +108,14 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
     ),
     MissingInput(
         "is_apprentice",
-        "No apprentice flag in the pinned national build. Later builds impute "
-        "apprentices among employees aged 21 to 24 to size the employer National "
-        "Insurance relief, from a small number of survey records, so effects on "
-        "apprentices alone could be shown only as example households, not as "
-        "national totals.",
+        "The certified national build (eeb6093e) stores an apprentice flag, but "
+        "it is drawn only at ages 21 to 24, to size the employer National "
+        "Insurance relief for apprentices: about 214 to 237 records, about "
+        "130,000 people weighted. It supports a national score of that 21 to 24 "
+        "relief, which comes out about 28% short of HMRC (£0.27bn against "
+        "£0.37bn in 2024-25). It does not describe apprentices, other ages or "
+        "any area below national level, so effects on apprentices could be "
+        "shown only as example households.",
         6,
     ),
     MissingInput(

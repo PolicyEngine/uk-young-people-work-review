@@ -13,6 +13,7 @@ COMPUTABLE = {
     "work_allowance_all_ages",
     "family_benefits_in_training",
     "shared_accommodation_age_25",
+    "employer_nics_under_25",
 }
 
 
@@ -63,10 +64,13 @@ def test_minimum_wage_measure_is_not_computable():
     assert reform.route is Route.NOT_COMPUTABLE
 
 
-def test_employer_nics_needs_the_model_first():
+def test_employer_nics_is_a_parameter_change():
+    # policyengine-uk 2.174.1 models the zero rate (#1).
     reform = get_reform("employer_nics_under_25")
-    assert reform.route is Route.NEEDS_PE_UK_FIRST
-    assert reform.parameter_changes is None
+    assert reform.route is Route.DASHBOARD_PARAM
+    path = "gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group"
+    assert reform.parameter_changes == {path: {str(y): 25.0 for y in POLICY_YEARS}}
+    assert CURRENT_VALUES[path] == 21
 
 
 def test_health_element_age_test_is_a_before_load_modifier():

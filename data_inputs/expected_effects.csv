@@ -7,7 +7,7 @@ limited_capability_for_work_payment,cost,,,static cash fiscal UK,Needs pe-uk fir
 work_allowance_all_ages,cost,,,static cash fiscal UK,Placeholder; all ages; reaches every UC claimant with a work allowance
 youth_guarantee,cost,,,static cash fiscal England,Spending line; unit cost of a 6-month 25-hour place at the 18-20 rate is about £7.3k before support costs
 local_participation_funding,cost,,,static cash fiscal England,Spending line
-employer_nics_under_25,cost,6160,2027,static cash fiscal UK,PolicyEngine scored the 21-24 extension at £6.16bn in 2027-28 (uk-autumn-budget-dashboard-2026 #111); needs pe-uk 2.175.x
+employer_nics_under_25,cost,6160,2027,static cash fiscal UK,PolicyEngine scored the 21-24 extension at £6.16bn in 2027-28 (uk-autumn-budget-dashboard-2026 #111)
 youth_minimum_wage,either,,,static cash fiscal UK,Not computable; earnings are inputs
 apprenticeship_incentives,cost,,,static cash fiscal England,Spending line
 family_benefits_in_training,cost,,,static cash fiscal UK,Placeholder; small; only 20-year-olds in approved education or training

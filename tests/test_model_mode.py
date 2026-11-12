@@ -21,7 +21,7 @@ class FakeSimulation:
         self.income = rng.uniform(5_000, 60_000, N_HOUSEHOLDS)
         self.policyengine_bundle = {
             "certified_data_build_id": "fake-build",
-            "model_version": "2.151.0",
+            "model_version": "2.174.1",
             "certified_data_artifact_sha256": "abc",
             "runtime_dataset_source": "/nonexistent/path.h5",
         }
