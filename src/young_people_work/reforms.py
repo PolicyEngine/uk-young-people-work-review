@@ -412,6 +412,16 @@ REFORMS: list[Reform] = [
     ),
 ]
 
+# Drill hook: an untracked, git-excluded ``drill_measures.py`` next to this
+# file replaces the registry for a local drill run, so packet-derived
+# measures never enter a commit. Absent in every checked-in tree.
+try:
+    from young_people_work.drill_measures import REFORMS as _DRILL_REFORMS
+except ImportError:
+    _DRILL_REFORMS = None
+if _DRILL_REFORMS is not None:
+    REFORMS = _DRILL_REFORMS
+
 REFORMS_BY_ID: dict[str, Reform] = {reform.id: reform for reform in REFORMS}
 
 
