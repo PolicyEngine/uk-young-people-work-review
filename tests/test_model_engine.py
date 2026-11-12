@@ -63,10 +63,12 @@ def test_protected_health_element_path_matches_the_engine():
             "households": {"h": {"members": ["a"]}},
         }
     )
-    for year, value in PROTECTED_HEALTH_ELEMENT.items():
-        assert uc_reform._protected_existing_health_element_monthly(sim, year) == pytest.approx(
-            value, abs=1e-6
-        )
+    # One comparison over every year, so a failure prints the whole path.
+    engine = {
+        year: float(uc_reform._protected_existing_health_element_monthly(sim, year))
+        for year in PROTECTED_HEALTH_ELEMENT
+    }
+    assert engine == pytest.approx(PROTECTED_HEALTH_ELEMENT, abs=1e-6)
 
 
 @pytest.mark.parametrize("reform", [r for r in REFORMS if r.parameter_changes], ids=lambda r: r.id)
