@@ -29,6 +29,7 @@ before the file is written; the counts themselves are never written.
 """
 
 import json
+import os
 import shutil
 import subprocess
 import time
@@ -119,6 +120,9 @@ def build_microsimulation(scenario=None, dataset: str | None = None):
     import policyengine as pe
 
     runtime_identity.ensure_data_token()
+    # A G0 move to an unmanaged build: a local .h5 path, recorded with its
+    # SHA-256 in every receipt and labelled unvalidated.
+    dataset = dataset or os.environ.get("YPW_DATASET") or None
     kwargs = {} if scenario is None else {"scenario": scenario}
     return pe.uk.managed_microsimulation(
         dataset=dataset, allow_unmanaged=dataset is not None, **kwargs
