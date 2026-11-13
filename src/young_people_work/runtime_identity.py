@@ -8,6 +8,7 @@ Copied in shape from the AB2026 dashboard's ``runtime_identity`` and
 import hashlib
 import importlib.metadata
 import json
+import re
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -126,6 +127,43 @@ def bundle_dataset(microsim) -> dict[str, Any]:
     return keep
 
 
+BUILD_ID = re.compile(r"(?:^|[/@])((?:[a-z0-9-]+-)?\d{8}T\d{6}Z-[0-9a-f]{8})(?:/|$)")
+
+
+def build_id_from(text: str | None) -> str | None:
+    """The Microcosm build id in a release path or URI, if it names one.
+
+    ``.../releases/<release>/<build id>/microcosm_uk_2024_25.h5`` and
+    ``file.h5@<build id>`` both give the build id; a bare file name gives None.
+    """
+    if not text:
+        return None
+    match = BUILD_ID.search(str(text))
+    return match.group(1) if match else None
+
+
+def dataset_label(bundle: dict[str, Any], source: str | None, certified: bool) -> str | None:
+    """The ``dataset`` label of a receipt: the build that was loaded.
+
+    The bundle reports its certified build id even when another file was
+    loaded (``allow_unmanaged``), so that id is the label only when the loaded
+    file is the certified one. Otherwise the label comes from the loaded
+    file's path or URI, or says it is unmanaged with the start of its SHA-256.
+    A local path itself is never published.
+    """
+    if certified:
+        return bundle.get("certified_data_build_id")
+    for text in (source, bundle.get("runtime_dataset_uri")):
+        build = build_id_from(text)
+        if build:
+            return build
+    sha = bundle.get("runtime_dataset_sha256")
+    if sha:
+        return f"unmanaged dataset (sha256 {sha[:12]})"
+    uri = bundle.get("runtime_dataset_uri")
+    return uri if uri and not str(uri).startswith(("/", "~", ".")) else None
+
+
 def engine_block(microsim=None) -> dict[str, Any]:
     """The ``engine`` block of results.json.
 
@@ -142,6 +180,8 @@ def engine_block(microsim=None) -> dict[str, Any]:
             "validated_pair": True,
         }
     versions = installed_versions()
+    source = getattr(microsim, "policyengine_bundle", {}) or {}
+    source = source.get("runtime_dataset_source") if isinstance(source, dict) else None
     bundle = bundle_dataset(microsim)
     build = bundle.get("certified_data_build_id")
     sha = bundle.get("runtime_dataset_sha256")
@@ -153,7 +193,7 @@ def engine_block(microsim=None) -> dict[str, Any]:
     )
     return {
         **versions,
-        "dataset": build or bundle.get("runtime_dataset_uri"),
+        "dataset": dataset_label(bundle, source, certified),
         "dataset_revision": bundle.get("runtime_dataset_revision"),
         "dataset_sha256": sha,
         "validated_pair": bool(certified),
