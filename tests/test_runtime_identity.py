@@ -42,8 +42,8 @@ def test_readme_names_the_pinned_pair():
 
 def test_label():
     assert LABEL == (
-        "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, "
-        "policyengine-uk 2.177.7, not in a policyengine.py release"
+        f"build {DATA_BUILD.id}, policyengine-uk {DATA_BUILD.engine}, "
+        "not in a policyengine.py release"
     )
 
 
