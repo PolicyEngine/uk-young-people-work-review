@@ -28,7 +28,7 @@ Do not read `is_uc_claimant` as a count of claimants: it flags benefit units tha
 
 ## Gates
 
-1. **G0 (as soon as the date is known).** Freeze the engine and data pair and post the record: start SHA; policyengine, policyengine-uk and policyengine-core from `importlib.metadata`; the dataset build id and SHA-256 (`runtime_identity.PINNED`, from `data_build.DATA_BUILD`: 9e18f010, `adb6204d...`); the label "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, policyengine-uk 2.177.7, not in a policyengine.py release". One heavy job at a time.
+1. **G0 (as soon as the date is known).** Freeze the engine and data pair and post the record: start SHA; policyengine, policyengine-uk and policyengine-core from `importlib.metadata`; the dataset build id and SHA-256 (`runtime_identity.PINNED`, from `data_build.DATA_BUILD`: 6f918b81, `e268e3af...`); the label "build uk-frs-calibration-attempt-20261112T133744Z-6f918b81, policyengine-uk 2.177.7, not in a policyengine.py release". One heavy job at a time.
 2. **G1.** Read the report. Write the coverage ledger: one line per recommendation with route, cause class and coverage. Replace the placeholder measures in `reforms.py` with the report's own, keeping `placeholder=True` until reconciled. Mark statement items already in the baseline or already announced as such, uncoded.
 3. **G2.** `make model`. Hand-check one household per measure with `household`.
 4. **G3.** Fill an official-costings CSV from the report and `data_inputs/official/`, run `reconcile`, and write a reason for each gap over 10%. Spending-line figures go in each measure's `official_cost` (value, year, source URL, paragraph); they are never added to the modelled total.

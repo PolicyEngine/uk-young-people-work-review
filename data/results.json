@@ -6,10 +6,10 @@
     "policyengine": null,
     "policyengine_uk": "2.177.7",
     "policyengine_core": "3.34.10",
-    "dataset": "uk-frs-calibration-attempt-20261110T204756Z-9e18f010",
-    "dataset_sha256": "adb6204d0af5e08a42cccec81250ce116518687f964e31c654a17d658b3416e8",
+    "dataset": "uk-frs-calibration-attempt-20261112T133744Z-6f918b81",
+    "dataset_sha256": "e268e3af7932784ad4471f008097a5acc6c3c5bc15c4c54fbb5a489b2a0ac9ae",
     "validated_pair": true,
-    "label": "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, policyengine-uk 2.177.7, not in a policyengine.py release"
+    "label": "build uk-frs-calibration-attempt-20261112T133744Z-6f918b81, policyengine-uk 2.177.7, not in a policyengine.py release"
   },
   "basis": {
     "cost": "Static, cash, fiscal year, UK unless a measure says otherwise, £ million; positive is a cost to the Exchequer",
@@ -2161,7 +2161,7 @@
     {
       "key": "is_apprentice",
       "missing_input": "is_apprentice",
-      "reason": "The national build eeb6093e stores an apprentice flag (not yet re-checked on build 9e18f010), but it is drawn only at ages 21 to 24, to size the employer National Insurance relief for apprentices: about 214 to 237 records, about 130,000 people weighted. It supports a national score of that 21 to 24 relief, which comes out about 28% short of HMRC (£0.27bn against £0.37bn in 2024-25). It does not describe apprentices, other ages or any area below national level, so effects on apprentices could be shown only as example households.",
+      "reason": "The national build eeb6093e stores an apprentice flag (build 6f918b81 stores it too; who it covers there is not yet re-checked), but it is drawn only at ages 21 to 24, to size the employer National Insurance relief for apprentices: about 214 to 237 records, about 130,000 people weighted. It supports a national score of that 21 to 24 relief, which comes out about 28% short of HMRC (£0.27bn against £0.37bn in 2024-25). It does not describe apprentices, other ages or any area below national level, so effects on apprentices could be shown only as example households.",
       "issue": 6
     },
     {

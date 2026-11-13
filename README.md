@@ -29,9 +29,9 @@ The review is expected to set out principles and recommendations rather than cos
 | policyengine-uk | 2.177.7 (the version the build below was made and certified on) |
 | policyengine-core | 3.34.10 (likewise) |
 | policyengine.py | not used: no release covers this pair |
-| Dataset | Microcosm UK 2024-25 national build `uk-frs-calibration-attempt-20261110T204756Z-9e18f010` (SHA-256 `adb6204d...16e8`) |
+| Dataset | Microcosm UK 2024-25 national build `uk-frs-calibration-attempt-20261112T133744Z-6f918b81` (SHA-256 `e268e3af...c9ae`) |
 
-Every figure is labelled "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, policyengine-uk 2.177.7, not in a policyengine.py release". The rule is the newest published build with the engine it was built on, never a build with another engine version; build `…-6f918b81` (also 2.177.7) will supersede this one once published, a change to the one constant `DATA_BUILD` in `src/young_people_work/data_build.py`.
+Every figure is labelled "build uk-frs-calibration-attempt-20261112T133744Z-6f918b81, policyengine-uk 2.177.7, not in a policyengine.py release". The rule is the newest published build with the engine it was built on, never a build with another engine version; build `…-6f918b81` superseded `…-9e18f010` (also 2.177.7) on 13 November 2026; a build switch is a change to the one constant `DATA_BUILD` in `src/young_people_work/data_build.py`.
 
 The pinned engine models the employer National Insurance zero rate for employees under 21 and relevant apprentices under 25, and carries the published April 2027 minimum wage rates (#1). Versions will be frozen and recorded before the event. Microdata are licensed and are not stored in this repository; only aggregate outputs that pass a disclosure check are published.
 

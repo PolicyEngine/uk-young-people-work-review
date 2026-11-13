@@ -136,9 +136,9 @@ def test_one_preset_household_from_the_full_model():
 
 
 def test_stored_pip_points_carry_forward_and_follow_the_thresholds():
-    # Build 9e18f010 stores 2024 PIP points and no category: the category in
-    # a scored year is derived from those points against that year's
-    # thresholds, so a threshold change moves the award.
+    # Builds 9e18f010 and 6f918b81 store 2024 PIP points and no category:
+    # the category in a scored year is derived from those points against
+    # that year's thresholds, so a threshold change moves the award.
     from young_people_work import data_limits
 
     situation = {

@@ -62,19 +62,24 @@ ALL_LIMITS: tuple[DataLimit, ...] = (
 # build is adopted only after each entry is re-checked (docs/RUNBOOK.md,
 # "Adopting a release"). eeb6093e is the build policyengine 6.17.2 pins;
 # both entries were re-checked on it (no PIP points columns; earnings are
-# survey inputs). 9e18f010 (data_build.DATA_BUILD) is a single-year file
-# (2024) whose person table stores pip_dl_points and pip_m_points and no PIP
+# survey inputs). 9e18f010 (the pin until 13 November 2026) is a
+# single-year file (2024) whose person table stores pip_dl_points and pip_m_points and no PIP
 # category column (checked from its HDFStore metadata, 13 November 2026).
 # policyengine-uk then derives each category from the latest points against
 # that year's points_thresholds, so a threshold change moves awards and the
 # PIP points limit does not hold (tests/test_model_engine.py). Earnings are
-# still survey inputs. Only the pinned build's entries are live (``LIMITS``).
+# still survey inputs. 6f918b81 (data_build.DATA_BUILD from 13 November
+# 2026) was re-checked the same way from its HDFStore metadata: it stores
+# pip_dl_points and pip_m_points, no PIP category column, and employment
+# income and hours as inputs, so its entries are 9e18f010's. Only the
+# pinned build's entries are live (``LIMITS``).
 LIMITS_BY_BUILD: dict[str, tuple[str, ...]] = {
     "eeb6093e": (
         "minimum_wage_does_not_reach_pay",
         "pip_assessment_points_missing",
     ),
     "9e18f010": ("minimum_wage_does_not_reach_pay",),
+    "6f918b81": ("minimum_wage_does_not_reach_pay",),
 }
 
 
@@ -131,8 +136,8 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
     ),
     MissingInput(
         "is_apprentice",
-        "The national build eeb6093e stores an apprentice flag (not yet "
-        "re-checked on build 9e18f010), but "
+        "The national build eeb6093e stores an apprentice flag (build "
+        "6f918b81 stores it too; who it covers there is not yet re-checked), but "
         "it is drawn only at ages 21 to 24, to size the employer National "
         "Insurance relief for apprentices: about 214 to 237 records, about "
         "130,000 people weighted. It supports a national score of that 21 to 24 "
