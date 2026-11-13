@@ -94,8 +94,12 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
     ),
     MissingInput(
         "wca_outcome",
-        "No Work Capability Assessment outcome. The health element group is "
-        "inferred from disability-benefit receipt.",
+        "No Work Capability Assessment outcome. On the certified build "
+        "(eeb6093e) the health element group is inferred from "
+        "disability-benefit receipt. Builds that include Microcosm #1550 store "
+        "LCW and LCWRA from the survey's own UC administrative record instead, "
+        "and build 6f918b81 also fits LCWRA households to DWP's paid count, so "
+        "the young LCWRA count has to be re-run on the build used on the day.",
         3,
     ),
     MissingInput(
@@ -121,8 +125,11 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
     MissingInput(
         "employees_under_21",
         "Employees under 21 are not a separate calibration target. The employer "
-        "National Insurance relief for them is checked against HMRC's estimate "
-        "on the data used for publication.",
+        "National Insurance relief for them comes out close to HMRC in 2024-25 "
+        "(about £1.06bn against £1.10bn), but the gap opens in the step to "
+        "2025-26 (about £1.55bn against HMRC's £1.9bn projection, about 18% "
+        "short), so figures for the relief from 2025-26 on are likely too low. It is "
+        "checked again on the data used for publication.",
         6,
     ),
     MissingInput(
