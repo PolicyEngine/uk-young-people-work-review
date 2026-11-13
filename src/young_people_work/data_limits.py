@@ -98,8 +98,7 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
         "(eeb6093e) the health element group is inferred from "
         "disability-benefit receipt. Builds that include Microcosm #1550 store "
         "LCW and LCWRA from the survey's own UC administrative record instead, "
-        "and build 6f918b81 also fits LCWRA households to DWP's paid count, so "
-        "the young LCWRA count has to be re-run on the build used on the day.",
+        "and build 6f918b81 also fits LCWRA households to DWP's paid count.",
         3,
     ),
     MissingInput(
