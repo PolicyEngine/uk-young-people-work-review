@@ -20,6 +20,8 @@ The one-page version is `docs/event-day-checklist.md`.
 | Guard | `uv run python scripts/check_public_data.py` | no |
 | Local build | `make build` (or `make build-mock` for a drill) | yes |
 
+Memory: The national file holds about 78k household rows from about 16k survey households, and its memory use cannot be cut much by trimming the file; the practical fix is one year per run (María, data owner, 13 November 2026). `model-run` has no per-year option yet.
+
 Model mode scores a commit: `model-run` and `generate --mode model` refuse a dirty tree. Run files go to `data/runs/` and are git-ignored; they are aggregates, but nothing leaves the repository before the reconciler's sign-off.
 
 Household files take the columns in `household.HOUSEHOLD_COLUMNS` (`id`, `year`, `age`, `weekly_hours`, `hourly_wage`, `lcwra`, `new_claimant`, `pip_dl_category`, `monthly_rent`, `region`, `in_approved_training`, `parent_age`, `parent_employment_income`); only `id` and `age` are required. Map a specimen sheet onto them before scoring. Each output row has monthly UC rounded to the penny once and the annual net income change from the rounded monthly amounts, with the commit SHA.

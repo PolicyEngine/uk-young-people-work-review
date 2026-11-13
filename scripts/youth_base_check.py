@@ -100,7 +100,10 @@ def main(path: str) -> int:
         )
     for label, value, benchmark in rows:
         print(f"{label}: {value / 1e3:,.0f}k  (benchmark: {benchmark})")
-    print(f"Survey records behind the NEET proxy: {int(neet.sum())}")
+    print(
+        f"Microcosm person rows behind the NEET proxy: {int(neet.sum())} "
+        "(rows, not distinct survey households)"
+    )
     return 0
 
 
