@@ -48,7 +48,7 @@ NI_UNDER_21_AGE = (
     "gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group"
 )
 
-# 2027-28 values in policyengine-uk 2.174.1 (monthly for UC, hourly for the
+# 2027-28 values in policyengine-uk 2.174.1, unchanged on 2.177.7 (monthly for UC, hourly for the
 # minimum wage, years of age for age limits).
 CURRENT_VALUES = {
     f"{SA}.SINGLE_YOUNG": 353.17,
@@ -65,7 +65,7 @@ CURRENT_VALUES = {
     NI_UNDER_21_AGE: 21,
 }
 
-# Current-law paths by fiscal year in policyengine-uk 2.174.1. Checked against
+# Current-law paths by fiscal year in policyengine-uk 2.174.1 (unchanged on 2.177.7). Checked against
 # the installed engine by tests/test_model_engine.py, so a pin move that
 # changes them fails there and they are re-read at G0.
 # - The protected UC health element (pre-2026 claimants), monthly: the
@@ -307,7 +307,7 @@ REFORMS: list[Reform] = [
         route=Route.LEDGER,
         route_reason=(
             "A payment to employers per apprentice; recorded as a spending line. "
-            "The certified build stores an apprentice flag, but it is drawn only "
+            "The national build stores an apprentice flag, but it is drawn only "
             "at ages 21 to 24 to size the employer National Insurance relief, so "
             "it cannot count apprentices aged 16 to 24."
         ),

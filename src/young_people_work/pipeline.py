@@ -9,7 +9,7 @@ Two modes:
   of the right shape, not estimates.
 - ``model``: assembles the run files ``young-people-work model-run`` wrote
   (``young_people_work.model``: one measure per process, under the heavy-run
-  lock, on the bundle's certified dataset), adds the package run, the
+  lock, on the pinned build, data_build.DATA_BUILD), adds the package run, the
   household presets from the full model, receipts bound to the execution
   identity, and writes ``manifest.json`` next to ``results.json``. Status is
   ``provisional`` or, for a drill, ``mock`` (with the MOCK banner).

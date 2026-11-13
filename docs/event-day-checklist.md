@@ -14,7 +14,7 @@ One page. Details and commands: `docs/RUNBOOK.md`.
 
 | T | Gate | Done when |
 |---|---|---|
-| before | G0 | freeze record posted: start SHA, versions, dataset id and SHA-256, certified or "unvalidated" |
+| before | G0 | freeze record posted: start SHA, versions, dataset id and SHA-256, the build label |
 | +30 min | G1 | every recommendation routed, with cause class and coverage |
 | +60 min | G2 | `make model` finished; one hand-checked household per measure |
 | +90 min | G3 | `reconcile` exits 0: every gap over 10% has a reason |

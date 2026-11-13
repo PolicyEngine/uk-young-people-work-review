@@ -165,8 +165,8 @@ def validate_public(results: dict[str, Any]) -> list[str]:
         errors.append("$.banner: a mock file's banner must say MOCK")
     if status in ("provisional", "final") and not results.get("engine", {}).get("validated_pair"):
         errors.append(
-            "$.engine.validated_pair: a public build needs the certified engine "
-            "and data pair; an unvalidated run is never published"
+            "$.engine.validated_pair: a public build needs the pinned engine "
+            "and data pair (data_build.DATA_BUILD); any other run is never published"
         )
     for measure in measures:
         mid = measure.get("id", "?")

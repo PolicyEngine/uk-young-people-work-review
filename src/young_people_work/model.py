@@ -39,7 +39,7 @@ from typing import Any
 
 import numpy as np
 
-from young_people_work import publication, runtime_identity
+from young_people_work import data_build, publication, runtime_identity
 from young_people_work.models import Reform, Route
 from young_people_work.years import POLICY_YEARS, fiscal_label
 
@@ -114,15 +114,77 @@ def heavy_lock(lock_dir: Path = LOCK_DIR, min_free_gb: float = MIN_FREE_GB, poll
 # --- simulations ----------------------------------------------------------
 
 
-def build_microsimulation(scenario=None, dataset: str | None = None):
-    """A Microsimulation pinned to the installed policyengine.py bundle."""
-    import policyengine as pe
+def fetch_dataset() -> Path:
+    """The pinned build's file (``data_build.DATA_BUILD``), downloaded once
+    into the Hugging Face cache with the saved read-only login."""
+    from huggingface_hub import hf_hub_download
 
     runtime_identity.ensure_data_token()
-    kwargs = {} if scenario is None else {"scenario": scenario}
-    return pe.uk.managed_microsimulation(
-        dataset=dataset, allow_unmanaged=dataset is not None, **kwargs
+    return Path(
+        hf_hub_download(
+            repo_id=data_build.HF_REPO,
+            filename=data_build.DATA_BUILD.hf_path,
+            repo_type=data_build.HF_REPO_TYPE,
+        )
     )
+
+
+def _runtime_dataset(path: Path):
+    """The dataset object policyengine_uk reads, as policyengine.py's managed
+    helper builds it from a local file."""
+    from policyengine_uk.data.dataset_schema import UKMultiYearDataset, UKSingleYearDataset
+
+    if UKMultiYearDataset.validate_file_path(str(path), False):
+        return UKMultiYearDataset(str(path))
+    if UKSingleYearDataset.validate_file_path(str(path), False):
+        return UKSingleYearDataset(str(path))
+    return str(path)
+
+
+def build_microsimulation(scenario=None, dataset: str | None = None):
+    """A Microsimulation on the pinned build, with the engine it was built on.
+
+    policyengine_uk is loaded directly: no policyengine.py release covers
+    the pair (``data_build.DATA_BUILD``). Refuses an installed policyengine-uk
+    other than the build's, and a file whose SHA-256 is not the build's.
+    """
+    from policyengine_uk import Microsimulation
+
+    build = data_build.DATA_BUILD
+    installed = runtime_identity.installed_versions()["policyengine_uk"]
+    if installed != build.engine:
+        raise RuntimeError(
+            f"policyengine-uk {installed} is installed, but build {build.id} was made on "
+            f"{build.engine}. Never mix a build with another engine version."
+        )
+    path = Path(dataset) if dataset is not None else fetch_dataset()
+    sha = _checked_sha256(path)
+    if sha != build.sha256:
+        raise RuntimeError(
+            f"{path.name} has SHA-256 {sha}, not that of build {build.id} ({build.sha256})."
+        )
+    kwargs = {} if scenario is None else {"scenario": scenario}
+    sim = Microsimulation(dataset=_runtime_dataset(path), **kwargs)
+    sim.young_people_provenance = {
+        "runtime_dataset_uri": f"hf://{data_build.HF_REPO}/{build.hf_path}",
+        "runtime_dataset_revision": build.id,
+        "runtime_dataset_source": str(path),
+        "runtime_dataset_sha256": sha,
+        "managed_by": "young_people_work.model (policyengine_uk directly)",
+    }
+    return sim
+
+
+_SHA_CACHE: dict[tuple, str] = {}
+
+
+def _checked_sha256(path: Path) -> str:
+    """The file's SHA-256, hashed once per file version."""
+    stat = path.stat()
+    key = (str(path.resolve()), stat.st_size, stat.st_mtime_ns)
+    if key not in _SHA_CACHE:
+        _SHA_CACHE[key] = runtime_identity.file_sha256(path)
+    return _SHA_CACHE[key]
 
 
 def _values(result) -> np.ndarray:

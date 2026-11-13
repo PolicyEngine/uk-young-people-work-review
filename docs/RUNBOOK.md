@@ -9,7 +9,7 @@ The one-page version is `docs/event-day-checklist.md`.
 | Step | Command | Heavy |
 |---|---|---|
 | Install | `uv sync --locked --extra model --extra dev`, then `cd dashboard && bun install --frozen-lockfile` | no |
-| Data login | the saved read-only Hugging Face login (never print it). policyengine.py reads only `HUGGING_FACE_TOKEN`; `model-run` and `certified_data` fall back to the saved login. `uv run python -m young_people_work.certified_data` downloads the certified file once and checks its SHA-256 | no |
+| Data login | the saved read-only Hugging Face login (never print it). `model-run` and `certified_data` use `HUGGING_FACE_TOKEN` or fall back to the saved login. `uv run python -m young_people_work.certified_data` downloads the pinned build once and checks its SHA-256 | no |
 | One measure | `uv run young-people-work model-run --measure <id>` | yes: takes `/tmp/pe-heavy.lock`, waits for 14 GB free+inactive |
 | Package | `uv run young-people-work model-run --package` | yes |
 | All of it | `make model` (each measure in its own process, then the package, then assembly) | yes |
@@ -28,7 +28,7 @@ Do not read `is_uc_claimant` as a count of claimants: it flags benefit units tha
 
 ## Gates
 
-1. **G0 (as soon as the date is known).** Freeze the engine and data pair and post the record: start SHA; policyengine, policyengine-uk and policyengine-core from `importlib.metadata`; the dataset build id and SHA-256 (`runtime_identity.PINNED`: eeb6093e, `0a9b77db...`); certified or "unvalidated under this engine". One heavy job at a time.
+1. **G0 (as soon as the date is known).** Freeze the engine and data pair and post the record: start SHA; policyengine, policyengine-uk and policyengine-core from `importlib.metadata`; the dataset build id and SHA-256 (`runtime_identity.PINNED`, from `data_build.DATA_BUILD`: 9e18f010, `adb6204d...`); the label "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, policyengine-uk 2.177.7, not in a policyengine.py release". One heavy job at a time.
 2. **G1.** Read the report. Write the coverage ledger: one line per recommendation with route, cause class and coverage. Replace the placeholder measures in `reforms.py` with the report's own, keeping `placeholder=True` until reconciled. Mark statement items already in the baseline or already announced as such, uncoded.
 3. **G2.** `make model`. Hand-check one household per measure with `household`.
 4. **G3.** Fill an official-costings CSV from the report and `data_inputs/official/`, run `reconcile`, and write a reason for each gap over 10%. Spending-line figures go in each measure's `official_cost` (value, year, source URL, paragraph); they are never added to the modelled total.
@@ -61,11 +61,11 @@ The page is noindex and bannered until the figures are reconciled and signed off
 
 ## Adopting a release
 
-1. Bump `policyengine[uk]` in `pyproject.toml`, run `uv lock`, and `uv sync --locked --extra model --extra dev`.
-2. Update `runtime_identity.PINNED` (versions, dataset build id and its SHA-256 from `uk_latest.release_bundle`) and the README pins; `tests/test_runtime_identity.py` checks them against the lock.
+1. Change `DATA_BUILD` in `src/young_people_work/data_build.py` to the new build (id, SHA-256, and the policyengine-uk and policyengine-core it was built on, from its `release_manifest.json`). Pin those two versions in `pyproject.toml`, run `uv lock`, and `uv sync --locked --extra model --extra dev`.
+2. Update the README; `tests/test_runtime_identity.py` checks `runtime_identity.PINNED` and the README against the lock.
 3. Re-run `pytest`; `tests/test_model_engine.py` re-reads `CURRENT_VALUES`, `PROTECTED_HEALTH_ELEMENT`, `NATIONAL_LIVING_WAGE` and the rebalanced years from the new engine and fails where they moved. Update them.
-4. Re-check each entry of `data_limits.LIMITS_BY_BUILD` against the new build and each entry of `model_limits.LIMITS`.
+4. Add the new build to `data_limits.LIMITS_BY_BUILD`, re-checking each entry of `data_limits.ALL_LIMITS` against it (the import fails until it is there), and each entry of `model_limits.LIMITS`.
 5. `make model`, then hand-check the household presets against the previous run and explain each change.
-6. The certified-data CI job (`python -m young_people_work.certified_data`) checks the bundle's dataset hash once the repository has the read secret `PE_UK_PRIVATE_HF_READ_TOKEN`; until then it reports that it was skipped.
+6. The certified-data CI job (`python -m young_people_work.certified_data`) checks the pinned build's hash once the repository has the read secret `PE_UK_PRIVATE_HF_READ_TOKEN`; until then it reports that it was skipped.
 
 Nothing deploys from this repository until the team chooses a target (`.github/workflows/deploy.yml`).

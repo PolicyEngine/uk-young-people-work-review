@@ -19,10 +19,9 @@ class FakeSimulation:
         self.reformed = scenario is not None
         rng = np.random.default_rng(1)
         self.income = rng.uniform(5_000, 60_000, N_HOUSEHOLDS)
-        self.policyengine_bundle = {
-            "certified_data_build_id": "fake-build",
-            "model_version": "2.174.1",
-            "certified_data_artifact_sha256": "abc",
+        self.young_people_provenance = {
+            "runtime_dataset_uri": "hf://fake/build.h5",
+            "runtime_dataset_revision": "fake-build",
             "runtime_dataset_source": "/nonexistent/path.h5",
         }
 
@@ -83,7 +82,10 @@ def test_run_scores_cost_deciles_and_age():
     young = next(r for r in first["age_band"] if r["age_band"] == "18-20")
     assert young["avg_change_gbp"] == pytest.approx(50.0)
     assert {row["group"] for row in first["poverty"]} == {"all", "children", "aged_16_24"}
-    assert out["identity"]["engine"]["validated_pair"] is False  # no file hash: never certified
+    assert (
+        out["identity"]["engine"]["validated_pair"] is False
+    )  # no file hash: never the pinned pair
+    assert out["identity"]["engine"]["label"] is None
 
 
 def test_upper_bound_runs_for_a_range_measure():

@@ -133,3 +133,24 @@ def test_one_preset_household_from_the_full_model():
     assert out["uc_monthly"] == pytest.approx(
         CURRENT_VALUES["gov.dwp.universal_credit.standard_allowance.amount.SINGLE_YOUNG"]
     )
+
+
+def test_stored_pip_points_carry_forward_and_follow_the_thresholds():
+    # Build 9e18f010 stores 2024 PIP points and no category: the category in
+    # a scored year is derived from those points against that year's
+    # thresholds, so a threshold change moves the award.
+    from young_people_work import data_limits
+
+    situation = {
+        "people": {"p": {"age": {2024: 30}, "pip_dl_points": {2024: 9}}},
+        "benunits": {"b": {"members": ["p"]}},
+        "households": {"h": {"members": ["p"]}},
+    }
+    base = Simulation(situation=situation)
+    assert str(base.calculate("pip_dl_category", Y)[0]) == "STANDARD"
+    higher = Simulation(
+        situation=situation,
+        reform={"gov.dwp.pip.daily_living.points_thresholds.standard": {f"{Y}-01-01": 10}},
+    )
+    assert str(higher.calculate("pip_dl_category", Y)[0]) == "NONE"
+    assert not data_limits.limits_for_paths(["gov.dwp.pip.daily_living.points_thresholds"])

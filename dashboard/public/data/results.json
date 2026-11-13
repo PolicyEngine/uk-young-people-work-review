@@ -3,12 +3,13 @@
   "status": "placeholder",
   "banner": "Pre-release template: placeholder figures, not PolicyEngine estimates",
   "engine": {
-    "policyengine": "6.17.2",
-    "policyengine_uk": "2.174.1",
-    "policyengine_core": "3.33.3",
-    "dataset": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
-    "dataset_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
-    "validated_pair": true
+    "policyengine": null,
+    "policyengine_uk": "2.177.7",
+    "policyengine_core": "3.34.10",
+    "dataset": "uk-frs-calibration-attempt-20261110T204756Z-9e18f010",
+    "dataset_sha256": "adb6204d0af5e08a42cccec81250ce116518687f964e31c654a17d658b3416e8",
+    "validated_pair": true,
+    "label": "build uk-frs-calibration-attempt-20261110T204756Z-9e18f010, policyengine-uk 2.177.7, not in a policyengine.py release"
   },
   "basis": {
     "cost": "Static, cash, fiscal year, UK unless a measure says otherwise, £ million; positive is a cost to the Exchequer",
@@ -1194,7 +1195,7 @@
       "description": "Larger payments to employers who take on apprentices aged 16 to 24.",
       "recommendation": "More apprenticeships for young people",
       "route": "ledger",
-      "route_reason": "A payment to employers per apprentice; recorded as a spending line. The certified build stores an apprentice flag, but it is drawn only at ages 21 to 24 to size the employer National Insurance relief, so it cannot count apprentices aged 16 to 24.",
+      "route_reason": "A payment to employers per apprentice; recorded as a spending line. The national build stores an apprentice flag, but it is drawn only at ages 21 to 24 to size the employer National Insurance relief, so it cannot count apprentices aged 16 to 24.",
       "placeholder": true,
       "computable": false,
       "publishable": false,
@@ -1210,7 +1211,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "ledger",
-      "receipt": "b9933113ae2899443ac562ed5b838563bb11f6265a3281472bd87983a5560367",
+      "receipt": "8092917ff079becffda047938a1c1b0d34f21857c248b0c807d98fe7f88cb757",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -2134,12 +2135,6 @@
       "issue": 1
     },
     {
-      "key": "pip_assessment_points_missing",
-      "missing_input": "pip_dl_points",
-      "reason": "The data hold the PIP award level, not the assessment points behind it, so a change to the points needed for an award cannot be costed. Changes to the weekly rates can.",
-      "issue": null
-    },
-    {
       "key": "has_ever_worked",
       "missing_input": "has_ever_worked",
       "reason": "No work history. The closest proxy, no earnings in the survey year, includes young people who have worked before.",
@@ -2166,7 +2161,7 @@
     {
       "key": "is_apprentice",
       "missing_input": "is_apprentice",
-      "reason": "The certified national build (eeb6093e) stores an apprentice flag, but it is drawn only at ages 21 to 24, to size the employer National Insurance relief for apprentices: about 214 to 237 records, about 130,000 people weighted. It supports a national score of that 21 to 24 relief, which comes out about 28% short of HMRC (£0.27bn against £0.37bn in 2024-25). It does not describe apprentices, other ages or any area below national level, so effects on apprentices could be shown only as example households.",
+      "reason": "The national build eeb6093e stores an apprentice flag (not yet re-checked on build 9e18f010), but it is drawn only at ages 21 to 24, to size the employer National Insurance relief for apprentices: about 214 to 237 records, about 130,000 people weighted. It supports a national score of that 21 to 24 relief, which comes out about 28% short of HMRC (£0.27bn against £0.37bn in 2024-25). It does not describe apprentices, other ages or any area below national level, so effects on apprentices could be shown only as example households.",
       "issue": 6
     },
     {

@@ -106,7 +106,7 @@ def test_model_limits_cover_the_known_gaps():
 
     assert keys("gov.dwp.universal_credit.elements.disabled.amount") == ["health_element_shadowed"]
     assert keys(WA) == ["no_age_dimension_in_uc_means_test"]
-    # Fixed in policyengine-uk 2.174.1 (#1): no model limit on either.
+    # Fixed in policyengine-uk 2.174.1 and still on 2.177.7 (#1): no model limit on either.
     assert keys("gov.hmrc.minimum_wage.non_apprentice[1].amount") == []
     assert (
         keys("gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group")

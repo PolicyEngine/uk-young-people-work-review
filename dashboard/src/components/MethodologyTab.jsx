@@ -47,8 +47,10 @@ export default function MethodologyTab({ data }) {
         </ul>
       </section>
       <p className="text-sm text-slate-500" data-testid="replication-line">
-        policyengine {engine.policyengine}, policyengine-uk {engine.policyengine_uk}, dataset {engine.dataset}
-        {engine.validated_pair ? "" : " (unvalidated under this engine)"}.
+        {engine.validated_pair && engine.label
+          ? `Engine and data: ${engine.label}`
+          : `policyengine-uk ${engine.policyengine_uk}, dataset ${engine.dataset} (not the pinned engine and data pair)`}
+        .
       </p>
     </div>
   );

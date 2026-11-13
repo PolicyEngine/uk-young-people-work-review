@@ -22,7 +22,7 @@ if (process.env.NEXT_PUBLIC_MOCK === "1" && !["mock", "placeholder"].includes(da
   errors.push("a MOCK build (NEXT_PUBLIC_MOCK=1) reads a mock or placeholder file only");
 }
 if (["provisional", "final"].includes(data.status) && !data.engine?.validated_pair) {
-  errors.push("a public build needs the certified engine and data pair");
+  errors.push("a public build needs the pinned engine and data pair (data_build.DATA_BUILD)");
 }
 for (const m of data.measures ?? []) {
   if (!m.computable && m.budgetary_impact !== null) errors.push(`${m.id}: not computable but carries a figure`);
