@@ -20,12 +20,16 @@ mode replaces them with the full model (``calculate`` and
 ``precompute_presets``), and a model-mode results file never carries them.
 
 Scoring basis (the drill's): monthly Universal Credit rounded to the penny
-once, at the end; the annual change in net income from the rounded monthly
-amounts.
+once, at the end, half up in exact decimal; the annual change in net income
+from the rounded monthly amounts. The annual change in Universal Credit, from
+the rounded monthly Universal Credit, is written alongside it, because the two
+differ by pence when earnings carry unrounded tax and National Insurance:
+the drill sheet must say which one it scores.
 """
 
 import csv
 import json
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any
 
@@ -145,7 +149,7 @@ def to_situation(preset: dict[str, Any], year: int = POLICY_YEARS[0]) -> dict[st
     household: dict[str, Any] = {"members": names, "region": {period: preset["region"]}}
     if preset["monthly_rent"]:
         household["rent"] = {period: preset["monthly_rent"] * 12}
-        household["tenure_type"] = {period: "RENT_PRIVATELY"}
+        household["tenure_type"] = {period: preset.get("tenure_type") or "RENT_PRIVATELY"}
     benunit: dict[str, Any] = {"members": names, "would_claim_uc": {period: True}}
     if preset.get("lcwra"):
         # A household situation without this flag gets the protected rate
@@ -216,8 +220,34 @@ def net_income_curve(
     return rows
 
 
-def _penny(value: float) -> float:
-    return float(f"{value:.2f}")
+PENNY = Decimal("0.01")
+
+
+def _penny(value: float | Decimal) -> float:
+    """Round to the penny, half up, in exact decimal.
+
+    ``f"{value:.2f}"`` rounds the binary float, so a half-penny tie such as
+    100.005 (held as 100.00499...) went down. Floats are read through their
+    shortest repr first, so 100.005 is the decimal 100.005.
+    """
+    exact = value if isinstance(value, Decimal) else Decimal(repr(float(value)))
+    return float(exact.quantize(PENNY, rounding=ROUND_HALF_UP))
+
+
+def _monthly(annual: float) -> float:
+    """An engine annual amount as a monthly amount on the scoring basis.
+
+    The engine holds amounts as float32, which cannot carry pennies exactly
+    (2,400.18 is held as 2,400.1799...). The annual amount is first taken to
+    the penny, then divided by 12 and rounded half up once.
+    """
+    annual_pennies = Decimal(repr(float(annual))).quantize(PENNY, rounding=ROUND_HALF_UP)
+    return _penny(annual_pennies / 12)
+
+
+def _annual_change(after: float, before: float) -> float:
+    """12 times the change in two rounded monthly amounts, in exact decimal."""
+    return _penny(12 * (Decimal(repr(after)) - Decimal(repr(before))))
 
 
 def simulate(
@@ -236,7 +266,7 @@ def simulate(
     simulation = Simulation(situation=situation, **kwargs)
     uc_annual = float(simulation.calculate("universal_credit", year).sum())
     net_annual = float(simulation.calculate("household_net_income", year).sum())
-    return {"uc_monthly": _penny(uc_annual / 12), "net_income_monthly": _penny(net_annual / 12)}
+    return {"uc_monthly": _monthly(uc_annual), "net_income_monthly": _monthly(net_annual)}
 
 
 def calculate(preset_id: str, reform=None, year: int = POLICY_YEARS[0]) -> dict[str, float]:
@@ -251,12 +281,16 @@ def compare(situation: dict[str, Any], reform, year: int) -> dict[str, float]:
     return {
         "baseline_uc_monthly": base["uc_monthly"],
         "reform_uc_monthly": after["uc_monthly"],
-        "uc_monthly_change": _penny(after["uc_monthly"] - base["uc_monthly"]),
+        "uc_monthly_change": _penny(
+            Decimal(repr(after["uc_monthly"])) - Decimal(repr(base["uc_monthly"]))
+        ),
         "baseline_net_income_monthly": base["net_income_monthly"],
         "reform_net_income_monthly": after["net_income_monthly"],
-        # From the rounded monthly amounts, as the scoring sheet asks.
-        "annual_net_income_change": _penny(
-            12 * (after["net_income_monthly"] - base["net_income_monthly"])
+        # From the rounded monthly amounts, as the scoring sheet asks. Both
+        # annual changes are written; the drill sheet names the one it scores.
+        "annual_uc_change": _annual_change(after["uc_monthly"], base["uc_monthly"]),
+        "annual_net_income_change": _annual_change(
+            after["net_income_monthly"], base["net_income_monthly"]
         ),
     }
 
@@ -273,11 +307,33 @@ HOUSEHOLD_COLUMNS = (
     "new_claimant",
     "pip_dl_category",
     "monthly_rent",
+    "tenure_type",
     "region",
     "in_approved_training",
     "parent_age",
     "parent_employment_income",
 )
+
+
+# policyengine-uk TenureType values. Social rents (council or housing
+# association) are not capped at the Local Housing Allowance; private rents are.
+TENURE_TYPES = (
+    "RENT_PRIVATELY",
+    "RENT_FROM_COUNCIL",
+    "RENT_FROM_HA",
+    "OWNED_OUTRIGHT",
+    "OWNED_WITH_MORTGAGE",
+)
+
+
+def _tenure(value: Any) -> str | None:
+    """A tenure from an input row; blank means private renting, as the presets."""
+    text = str(value or "").strip().upper()
+    if not text:
+        return None
+    if text not in TENURE_TYPES:
+        raise ValueError(f"Unknown tenure_type {text!r}: use one of {', '.join(TENURE_TYPES)}")
+    return text
 
 
 def _truthy(value: Any) -> bool:
@@ -305,6 +361,7 @@ def row_to_preset(row: dict[str, Any]) -> tuple[dict[str, Any], int]:
         "new_claimant": _truthy(row.get("new_claimant", "")),
         "pip_dl_category": str(row.get("pip_dl_category") or "NONE"),
         "monthly_rent": number("monthly_rent"),
+        "tenure_type": _tenure(row.get("tenure_type")),
         "in_approved_training": _truthy(row.get("in_approved_training", "")),
         "full_model_only": True,
     }

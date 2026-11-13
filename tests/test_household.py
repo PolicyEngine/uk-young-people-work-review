@@ -90,3 +90,49 @@ def test_lcwra_presets_say_which_rate_they_get():
 def test_sketch_applies_the_health_element_age_test():
     preset = PRESETS_BY_ID["single_20_new_health_element"]
     assert uc_monthly(preset, health_min_age=22) == pytest.approx(353.17)
+
+
+def test_penny_rounds_half_up_in_exact_decimal():
+    from young_people_work.household import _penny
+
+    # f"{100.005:.2f}" gives 100.00: the binary float sits just below the tie.
+    assert f"{100.005:.2f}" == "100.00"
+    assert _penny(100.005) == 100.01
+    assert _penny(200.015) == 200.02
+    assert _penny(-0.005) == -0.01
+
+
+def test_monthly_amount_survives_float32_annual():
+    import struct
+
+    from young_people_work.household import _monthly
+
+    # The engine holds £2,400.18 a year as float32 (2,400.1799...): one
+    # twelfth is a half-penny tie (200.015) that must round up, not down.
+    as_float32 = struct.unpack("f", struct.pack("f", 2400.18))[0]
+    assert f"{as_float32 / 12:.2f}" == "200.01"
+    assert _monthly(as_float32) == 200.02
+
+
+def test_annual_changes_from_rounded_monthly_amounts():
+    from young_people_work.household import _annual_change
+
+    # 12 x (310.27 - 200.13) is 1321.6799... in binary floats.
+    assert _annual_change(310.27, 200.13) == 1321.68
+    assert _annual_change(0.0, 100.01) == -1200.12
+
+
+def test_household_row_takes_a_tenure():
+    from young_people_work.household import row_to_preset
+
+    preset, _ = row_to_preset(
+        {"id": "h1", "age": "23", "monthly_rent": "400", "tenure_type": "rent_from_council"}
+    )
+    situation = to_situation(preset, 2028)
+    assert situation["households"]["household"]["tenure_type"] == {"2028": "RENT_FROM_COUNCIL"}
+    default, _ = row_to_preset({"id": "h2", "age": "23", "monthly_rent": "400"})
+    assert to_situation(default, 2028)["households"]["household"]["tenure_type"] == {
+        "2028": "RENT_PRIVATELY"
+    }
+    with pytest.raises(ValueError, match="tenure_type"):
+        row_to_preset({"id": "h3", "age": "23", "tenure_type": "council"})
