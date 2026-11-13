@@ -21,6 +21,7 @@ measure says otherwise, £m, positive is a cost to the Exchequer.
 import csv
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -362,9 +363,12 @@ def write_manifest(results: dict[str, Any], path: Path, commit: str | None) -> N
 
 
 def write_results(results: dict[str, Any], *paths: Path) -> None:
-    errors = publication.validate_public(results)
+    errors = publication.validate_public(results, allow_zero=True)
     if errors:
         raise ValueError("Results fail the publication check:\n" + "\n".join(errors))
+    for warning in publication.zero_figure_problems(results):
+        # Written so the run is kept; the guard and the page build refuse it.
+        print(f"WARNING {warning}", file=sys.stderr)
     text = json.dumps(results, indent=2, ensure_ascii=False) + "\n"
     for path in paths:
         path.parent.mkdir(parents=True, exist_ok=True)
