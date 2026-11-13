@@ -4,16 +4,23 @@ A Microcosm build may run only under the policyengine-uk version it was
 built on. A build under another engine version gives national figures that
 are invalid, and the "unvalidated under this engine" label does not make them
 usable. ``python -m young_people_work.pair_check <release dir>`` reads every
-``policyengine-uk==<version>`` the build's release files record, compares
-each with the installed policyengine-uk and exits 1 on any difference.
+policyengine-uk version the build's release files record, compares each with
+the installed policyengine-uk and exits 1 on any difference.
 
-The release files record the build engine only in some gate details, so a
-build that records none fails too, unless ``--build-engine`` states the
+A release folder records the build engine in up to three places, and any one
+is enough (``terminal_gates.json`` is not needed):
+- ``build_manifest.json``: ``runtime["policyengine-uk"]``;
+- ``release_manifest.json``: ``built_with_model_package.version`` and each
+  ``compatible_model_packages[].specifier`` pinned with ``==``;
+- any ``policyengine-uk==<version>`` string, such as a gate's details in
+  ``terminal_gates.json``.
+A folder that records none fails too, unless ``--build-engine`` states the
 version from the data owner's release note. Light: reads JSON, no simulation.
 """
 
 import argparse
 import importlib.metadata
+import json
 import re
 import sys
 from pathlib import Path
@@ -21,11 +28,39 @@ from pathlib import Path
 ENGINE_PIN = re.compile(r"policyengine[-_]uk\s*==\s*([0-9][0-9A-Za-z.+-]*)")
 
 
+def _is_uk(package) -> bool:
+    name = str(package.get("name", "")) if isinstance(package, dict) else ""
+    return name.replace("_", "-") == "policyengine-uk"
+
+
+def _manifest_engines(data) -> set[str]:
+    """policyengine-uk versions in the build and release manifests' fields."""
+    if not isinstance(data, dict):
+        return set()
+    found = set()
+    runtime = data.get("runtime")
+    if isinstance(runtime, dict) and runtime.get("policyengine-uk"):
+        found.add(str(runtime["policyengine-uk"]))
+    built = data.get("built_with_model_package")
+    if _is_uk(built) and built.get("version"):
+        found.add(str(built["version"]))
+    for package in data.get("compatible_model_packages") or []:
+        specifier = str(package.get("specifier", "")) if _is_uk(package) else ""
+        if specifier.startswith("=="):
+            found.add(specifier[2:].strip())
+    return found
+
+
 def recorded_engines(release_dir: Path) -> set[str]:
-    """Every policyengine-uk version pinned in the build's release JSON files."""
+    """Every policyengine-uk version the build's release JSON files record."""
     found: set[str] = set()
     for path in sorted(Path(release_dir).glob("*.json")):
-        found.update(ENGINE_PIN.findall(path.read_text(errors="replace")))
+        text = path.read_text(errors="replace")
+        found.update(ENGINE_PIN.findall(text))
+        try:
+            found.update(_manifest_engines(json.loads(text)))
+        except json.JSONDecodeError:
+            pass
     return found
 
 

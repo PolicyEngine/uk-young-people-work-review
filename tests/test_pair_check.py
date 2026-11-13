@@ -41,6 +41,65 @@ def test_cli_exit_code(tmp_path, monkeypatch, capsys):
     assert pair_check.main([str(release)]) == 0
 
 
+def _manifests_only(tmp_path, engine="2.177.7"):
+    """A release folder shaped like 9e18f010's two manifests, with no
+    terminal_gates.json (as when only the manifests are downloaded)."""
+    (tmp_path / "build_manifest.json").write_text(
+        json.dumps(
+            {
+                "release": "microcosm-uk-2024-25-national",
+                "runtime": {
+                    "python": "3.14.6",
+                    "policyengine-core": "3.34.10",
+                    "policyengine-uk": engine,
+                },
+            }
+        )
+    )
+    (tmp_path / "release_manifest.json").write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "built_with_model_package": {"name": "policyengine-uk", "version": engine},
+                "compatible_model_packages": [
+                    {"name": "policyengine-uk", "specifier": f"=={engine}"}
+                ],
+                "built_with_core_package": {"name": "policyengine-core", "version": "3.34.10"},
+            },
+            indent=2,
+        )
+    )
+    return tmp_path
+
+
+def test_manifests_alone_record_the_engine(tmp_path):
+    release = _manifests_only(tmp_path)
+    assert not (release / "terminal_gates.json").exists()
+    assert pair_check.recorded_engines(release) == {"2.177.7"}
+    assert pair_check.problems(release, "2.177.7") == []
+    found = pair_check.problems(release, "2.174.1")
+    assert len(found) == 1 and "2.177.7" in found[0]
+
+
+def test_each_manifest_field_is_read(tmp_path):
+    (tmp_path / "build_manifest.json").write_text(
+        json.dumps({"runtime": {"policyengine-uk": "1.0.0"}})
+    )
+    (tmp_path / "release_manifest.json").write_text(
+        json.dumps(
+            {
+                "built_with_model_package": {"name": "policyengine-uk", "version": "2.0.0"},
+                "compatible_model_packages": [
+                    {"name": "policyengine-uk", "specifier": "==3.0.0"},
+                    {"name": "policyengine-uk", "specifier": ">=4.0.0"},
+                    {"name": "policyengine-core", "specifier": "==5.0.0"},
+                ],
+            }
+        )
+    )
+    assert pair_check.recorded_engines(tmp_path) == {"1.0.0", "2.0.0", "3.0.0"}
+
+
 class _Sim:
     def __init__(self, bundle):
         self.policyengine_bundle = bundle
