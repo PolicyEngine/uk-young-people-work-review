@@ -46,7 +46,7 @@ uv run python scripts/check_public_data.py
 
 | Failure | Do |
 |---|---|
-| `model-run` waits for the lock | check who holds it (`ls -ld /tmp/pe-heavy.lock`); clear it only once its owner has exited |
+| `model-run` waits for the lock | check who holds it (`cat /tmp/pe-heavy.lock`: "<pid> <label>"); never delete another owner's lock: ask its owner |
 | a computable measure has no run | `generate --mode model` fails; run it, never publish without it |
 | a gap over 10% has no reason | `reconcile` exits 1; write the reason or re-route the line |
 | a build has no banner | stop; the results status or `NEXT_PUBLIC_MOCK` is wrong |

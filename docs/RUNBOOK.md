@@ -10,7 +10,7 @@ The one-page version is `docs/event-day-checklist.md`.
 |---|---|---|
 | Install | `uv sync --locked --extra model --extra dev`, then `cd dashboard && bun install --frozen-lockfile` | no |
 | Data login | the saved read-only Hugging Face login (never print it). `model-run` and `certified_data` use `HUGGING_FACE_TOKEN` or fall back to the saved login. `uv run python -m young_people_work.certified_data` downloads the pinned build once and checks its SHA-256 | no |
-| One measure | `uv run young-people-work model-run --measure <id>` | yes: takes `/tmp/pe-heavy.lock`, waits for 14 GB free+inactive |
+| One measure | `uv run young-people-work model-run --measure <id>` | yes: takes the file lock `/tmp/pe-heavy.lock` ("<pid> young-people-work", noclobber, removed only by its owner), waits for 22 GB free+inactive |
 | Package | `uv run young-people-work model-run --package` | yes |
 | All of it | `make model` (each measure in its own process, then the package, then assembly) | yes |
 | Assemble | `uv run young-people-work generate --mode model [--status mock]` | no (single households only) |

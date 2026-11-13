@@ -3,7 +3,8 @@
 - ``generate``: write ``data/results.json`` (placeholder, or model mode from
   the run files), and ``manifest.json`` beside it in model mode.
 - ``model-run``: one measure, or the package, through the full model on the
-  frozen data. Heavy: takes ``/tmp/pe-heavy.lock`` and waits for 14 GB.
+  frozen data. Heavy: takes the file lock ``/tmp/pe-heavy.lock`` ("<pid>
+  young-people-work", removed only by its owner) and waits for 22 GB.
 - ``household``: one preset household from the full model.
 - ``households``: a household file (CSV or JSON, the drill's specimen
   sheet) on the scoring basis, one row per household and measure.

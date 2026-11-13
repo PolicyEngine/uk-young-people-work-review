@@ -29,8 +29,11 @@ before the file is written; the counts themselves are never written.
 """
 
 import json
+import os
 import shutil
+import signal
 import subprocess
+import threading
 import time
 from collections.abc import Callable, Iterable
 from contextlib import contextmanager
@@ -47,8 +50,9 @@ AGE_BANDS = ["16-17", "18-20", "21-24", "25 and over"]
 AGE_EDGES = [(16, 18), (18, 21), (21, 25), (25, 200)]
 NO_CHANGE_GBP = 1.0
 BIG_CHANGE = 0.05
-LOCK_DIR = Path("/tmp/pe-heavy.lock")
-MIN_FREE_GB = 14.0
+LOCK_PATH = Path("/tmp/pe-heavy.lock")
+LOCK_LABEL = "young-people-work"
+MIN_FREE_GB = 22.0
 RUNS_DIR = runtime_identity.REPO_ROOT / "data" / "runs"
 
 HOUSEHOLD_VARIABLES = (
@@ -71,6 +75,11 @@ PERSON_MAPPED = ("in_poverty_bhc", "in_poverty_ahc")
 
 
 # --- the heavy-run lock -------------------------------------------------
+#
+# The machine protocol: the lock is a FILE holding "<pid> <label>", created
+# with noclobber (O_CREAT | O_EXCL, so a held file or legacy directory lock
+# makes the caller wait), removed only by its owner, and the run waits for
+# 22 GB of free plus inactive memory once it holds the lock.
 
 
 def free_inactive_gb() -> float | None:
@@ -78,25 +87,61 @@ def free_inactive_gb() -> float | None:
     if shutil.which("vm_stat") is None:
         return None
     out = subprocess.run(["vm_stat"], capture_output=True, text=True, check=False).stdout
-    page = 16384
+    page = None
     pages = 0
     for line in out.splitlines():
         if "page size of" in line:
             page = int(line.split("page size of")[1].split()[0])
         if line.startswith(("Pages free:", "Pages inactive:")):
             pages += int(line.split(":")[1].strip().rstrip("."))
-    return pages * page / 1e9
+    return None if page is None else pages * page / 1e9
+
+
+def lock_owner(lock_path: Path) -> str | None:
+    """The pid field of the lock file, or None if there is no such file."""
+    try:
+        fields = Path(lock_path).read_text().split()
+    except OSError:
+        return None
+    return fields[0] if fields else None
+
+
+def _try_lock(lock_path: Path, label: str) -> bool:
+    try:
+        fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+    except FileExistsError:
+        return False
+    with os.fdopen(fd, "w") as handle:
+        handle.write(f"{os.getpid()} {label}\n")
+    return True
+
+
+def _release_lock(lock_path: Path) -> None:
+    """Remove the lock only if this process wrote it."""
+    if lock_owner(lock_path) == str(os.getpid()):
+        Path(lock_path).unlink(missing_ok=True)
+
+
+def _exit_on_term(signum, frame):
+    raise SystemExit(128 + signum)
 
 
 @contextmanager
-def heavy_lock(lock_dir: Path = LOCK_DIR, min_free_gb: float = MIN_FREE_GB, poll: float = 15.0):
-    """Take the shared heavy-run lock, then wait for memory; release on exit."""
-    while True:
-        try:
-            lock_dir.mkdir()
-            break
-        except FileExistsError:
-            time.sleep(poll)
+def heavy_lock(
+    lock_path: Path | None = None,
+    min_free_gb: float | None = None,
+    poll: float = 15.0,
+    label: str = LOCK_LABEL,
+):
+    """Take the machine-wide heavy-run lock, then wait for memory; release on
+    exit (SIGTERM included). Defaults are read at call time, so tests can
+    point ``LOCK_PATH`` at a scratch file."""
+    lock_path = Path(LOCK_PATH if lock_path is None else lock_path)
+    min_free_gb = MIN_FREE_GB if min_free_gb is None else min_free_gb
+    while not _try_lock(lock_path, label):
+        time.sleep(poll)
+    main = threading.current_thread() is threading.main_thread()
+    previous = signal.signal(signal.SIGTERM, _exit_on_term) if main else None
     try:
         while True:
             free = free_inactive_gb()
@@ -105,10 +150,9 @@ def heavy_lock(lock_dir: Path = LOCK_DIR, min_free_gb: float = MIN_FREE_GB, poll
             time.sleep(poll)
         yield
     finally:
-        try:
-            lock_dir.rmdir()
-        except OSError:
-            pass
+        if main:
+            signal.signal(signal.SIGTERM, previous)
+        _release_lock(lock_path)
 
 
 # --- simulations ----------------------------------------------------------

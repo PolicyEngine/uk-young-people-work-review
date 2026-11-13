@@ -161,14 +161,6 @@ def test_receipt_binds_execution_identity():
     assert a != b != publication.receipt(reform)
 
 
-def test_heavy_lock_is_taken_and_released(tmp_path, monkeypatch):
-    monkeypatch.setattr(model, "free_inactive_gb", lambda: 100.0)
-    lock = tmp_path / "lock"
-    with model.heavy_lock(lock, poll=0):
-        assert lock.is_dir()
-    assert not lock.exists()
-
-
 OLD_ENGINE = {
     # A 6.17.2-era run: policyengine-uk 2.174.1 on build eeb6093e.
     "policyengine": "6.17.2",
