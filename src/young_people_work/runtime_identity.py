@@ -130,6 +130,16 @@ def dataset_provenance(microsim) -> dict[str, Any]:
     return keep
 
 
+def is_validated_pair(engine: dict[str, Any]) -> bool:
+    """Whether an engine block's dataset SHA-256 and versions are the pinned
+    build's (``DATA_BUILD``). Computed, never read from the block itself."""
+    return (
+        engine.get("dataset_sha256") == DATA_BUILD.sha256
+        and engine.get("policyengine_uk") == DATA_BUILD.engine
+        and engine.get("policyengine_core") == DATA_BUILD.core
+    )
+
+
 def engine_block(microsim=None) -> dict[str, Any]:
     """The ``engine`` block of results.json.
 

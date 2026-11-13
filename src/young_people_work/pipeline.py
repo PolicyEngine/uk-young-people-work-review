@@ -296,6 +296,23 @@ def build_model_results(
     if len(engines) != 1:
         raise ValueError("Runs come from different engines or datasets; rerun them on one G0 pair")
     engine = json.loads(engines.pop())
+    # Run files are git-ignored and survive branch switches, so the stored
+    # validated_pair is never trusted: recompute it against DATA_BUILD.
+    validated = runtime_identity.is_validated_pair(engine)
+    if engine.get("validated_pair") and not validated:
+        raise ValueError(
+            "The runs claim validated_pair but were made on dataset "
+            f"{engine.get('dataset_sha256')}, policyengine-uk "
+            f"{engine.get('policyengine_uk')}, policyengine-core "
+            f"{engine.get('policyengine_core')}, not build "
+            f"{runtime_identity.DATA_BUILD.id} with policyengine-uk "
+            f"{runtime_identity.DATA_BUILD.engine}; delete them and rerun on the pinned pair"
+        )
+    engine = {
+        **engine,
+        "validated_pair": validated,
+        "label": runtime_identity.LABEL if validated else None,
+    }
     identity = {
         "engine": engine,
         "commit": commit,

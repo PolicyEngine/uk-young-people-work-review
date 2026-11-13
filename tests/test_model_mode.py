@@ -167,3 +167,57 @@ def test_heavy_lock_is_taken_and_released(tmp_path, monkeypatch):
     with model.heavy_lock(lock, poll=0):
         assert lock.is_dir()
     assert not lock.exists()
+
+
+OLD_ENGINE = {
+    # A 6.17.2-era run: policyengine-uk 2.174.1 on build eeb6093e.
+    "policyengine": "6.17.2",
+    "policyengine_uk": "2.174.1",
+    "policyengine_core": "3.34.10",
+    "dataset": "microcosm-eeb6093e",
+    "dataset_revision": "microcosm-eeb6093e",
+    "dataset_sha256": "0a9b77db" + "0" * 56,
+}
+
+
+def _rewrite_engines(runs_dir, engine):
+    for path in runs_dir.glob("*.json"):
+        run = json.loads(path.read_text())
+        run["identity"]["engine"] = engine
+        path.write_text(json.dumps(run))
+
+
+def test_stale_runs_claiming_a_validated_pair_are_refused(tmp_path):
+    _write_runs(tmp_path)
+    _rewrite_engines(tmp_path, {**OLD_ENGINE, "validated_pair": True, "label": "x"})
+    with pytest.raises(ValueError, match="claim validated_pair"):
+        pipeline.build_model_results(tmp_path, status="provisional", commit="0" * 40)
+
+
+def test_stale_runs_are_marked_not_validated(tmp_path):
+    _write_runs(tmp_path)
+    _rewrite_engines(tmp_path, {**OLD_ENGINE, "validated_pair": False, "label": None})
+    results = pipeline.build_model_results(tmp_path, status="provisional", commit="0" * 40)
+    assert results["engine"]["validated_pair"] is False
+    assert results["engine"]["label"] is None
+    assert any("validated_pair" in e for e in publication.validate_public(results))
+
+
+def test_runs_on_the_pinned_pair_are_validated(tmp_path):
+    from young_people_work.data_build import DATA_BUILD, LABEL
+
+    _write_runs(tmp_path)
+    pinned = {
+        "policyengine": None,
+        "policyengine_uk": DATA_BUILD.engine,
+        "policyengine_core": DATA_BUILD.core,
+        "dataset": DATA_BUILD.id,
+        "dataset_revision": None,
+        "dataset_sha256": DATA_BUILD.sha256,
+        "validated_pair": True,
+        "label": LABEL,
+    }
+    _rewrite_engines(tmp_path, pinned)
+    results = pipeline.build_model_results(tmp_path, status="mock", commit="0" * 40)
+    assert results["engine"]["validated_pair"] is True
+    assert results["engine"]["label"] == LABEL
