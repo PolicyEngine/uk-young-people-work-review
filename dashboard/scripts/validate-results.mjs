@@ -1,6 +1,7 @@
 // Build-time check of public/data/results.json: the schema the page needs,
 // the banner while any measure is a placeholder or a mock, MOCK ids only in
-// a mock file, and no unvalidated engine pair in a public build. Mirrors
+// a mock file, no unvalidated engine pair in a public build, and no coded
+// measure shown at £0 in every year without a zero_reason. Mirrors
 // young_people_work.publication.validate_public.
 import { readFileSync } from "node:fs";
 
@@ -27,6 +28,12 @@ if (["provisional", "final"].includes(data.status) && !data.engine?.validated_pa
 for (const m of data.measures ?? []) {
   if (!m.computable && m.budgetary_impact !== null) errors.push(`${m.id}: not computable but carries a figure`);
   if (m.computable && !Array.isArray(m.budgetary_impact)) errors.push(`${m.id}: computable but has no figures`);
+  const values = (Array.isArray(m.budgetary_impact) ? m.budgetary_impact : [])
+    .map((row) => row?.value_m)
+    .filter((v) => v !== null && v !== undefined);
+  if (m.computable && values.length && values.every((v) => Math.abs(v) < 0.5) && !m.zero_reason) {
+    errors.push(`${m.id}: a coded measure scores £0 in every year; route it not-computable with the reason, or give zero_reason`);
+  }
 }
 if (errors.length) {
   console.error(errors.join("\n"));

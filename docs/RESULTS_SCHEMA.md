@@ -20,5 +20,6 @@ One file, written by `young-people-work generate` to `data/results.json` and cop
 Rules (checked by `publication.validate_public`, `scripts/check_public_data.py` and `dashboard/scripts/validate-results.mjs`):
 
 - A measure that is not computable has `null` figures, never zeros, and a `route_reason`.
+- A computable measure whose `budgetary_impact` rounds to £0m in every year needs a `zero_reason` saying why zero is right. Without one, the public-data guard and the page build refuse the file; `generate --mode model` still writes it, with a warning, so the run is kept. A measure that acts only through inputs the data lack is not computable: route it so, with the reason.
 - No record identifiers, weights or record counts.
 - Cells below 10 survey households are blanked (`suppressed: true`) before writing.

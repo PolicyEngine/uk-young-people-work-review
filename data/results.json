@@ -40,6 +40,7 @@
       "placeholder": true,
       "computable": true,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [
         4
@@ -57,7 +58,7 @@
         "gov.dwp.universal_credit.standard_allowance.amount.SINGLE_YOUNG"
       ],
       "status": "held-placeholder",
-      "receipt": "4b546a32ee77e0beaf56edae728285898bbf5fe9e233c4f304e77beff240d4cd",
+      "receipt": "3daaa4805a4cc68eabb373765863d446f1e0d1e9fbf1f047f39c2db4cf73c1cd",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -244,6 +245,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [
         "has_ever_worked",
         "neet_status"
@@ -258,7 +260,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "not-computable",
-      "receipt": "bc0553244152586d803cfa58be0659b874bd5108cd63ad73335cd991da79f6bc",
+      "receipt": "370603c3237292f2d2e5652c8da76194d839edb6cd52619d18ed0d4e0e389b9f",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -275,6 +277,7 @@
       "placeholder": true,
       "computable": true,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [
         "wca_outcome"
       ],
@@ -292,7 +295,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "held-placeholder",
-      "receipt": "f784bb93e4cb564076074e917e45d36db65a49abf5b16ea479d44b3a346f6011",
+      "receipt": "6ebac70757622b08341bea6af35c4f6d71fed526e1640981daa7365002ae1f44",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -479,6 +482,7 @@
       "placeholder": true,
       "computable": true,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [
         "wca_outcome"
       ],
@@ -496,7 +500,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "held-placeholder",
-      "receipt": "db1f574cc842063504be770c55fbaf1d3c31c6f959f5a52df8d175cf36e6bfad",
+      "receipt": "87dff818f7ab57df2e70e71c3771d6d459b6b5fa7cef99b1d519b21bda60d30f",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -683,6 +687,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [
         "wca_outcome"
       ],
@@ -695,7 +700,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "needs-pe-uk-first",
-      "receipt": "75c5aa8983f2a2e1e48815f5a0c71c297cc3d2b2518428e453e06bb00ee724a3",
+      "receipt": "357f95f77aa1ceaeb80b469f3eeed1931ca7a532bf490db6846978fc2395f1c5",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -712,6 +717,7 @@
       "placeholder": true,
       "computable": true,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "coverage": "UK",
@@ -723,7 +729,7 @@
         "gov.dwp.universal_credit.means_test.work_allowance.without_housing"
       ],
       "status": "held-placeholder",
-      "receipt": "a67826411bc0c0e669a8ae92a4016a37bac2e4d82d630bcb4110fa115569771b",
+      "receipt": "5516a42687343236f8c8f3b21ba1a0136fad08dd9d8e7b19c574ca0a2fd235f5",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -910,6 +916,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [
         "neet_status"
       ],
@@ -922,7 +929,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "ledger",
-      "receipt": "c37440d1103fdb98313528add9582e4dd3d0d068c12f300fff06fb9d727f10d8",
+      "receipt": "31669890457db9d3c46f9d736e3b0aae12b9904d218a6498ff877313ca2b2245",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -939,6 +946,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "coverage": "England",
@@ -947,7 +955,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "ledger",
-      "receipt": "30801fd486a947454e95aa6c73ba0eade1ada2bf2f9a86238bfbadb179890616",
+      "receipt": "58fd385bc7c66f8b9cbe0f1863f843748b648c4a1e2d2af9eb1e39ea2410ecbd",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -964,6 +972,7 @@
       "placeholder": true,
       "computable": true,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [
         "employees_under_21",
         "hiring_flows"
@@ -980,7 +989,7 @@
         "gov.hmrc.national_insurance.class_1.secondary_zero_rate_age_limits.under_21_group"
       ],
       "status": "held-placeholder",
-      "receipt": "c3323fff5de1f1c897548531589b237d1869b17d4f7bf0e8dbc224afb4a6cd3e",
+      "receipt": "511b197063444e9c1f521e8887ddf6a7c1298a2936422d76f201088d659bab07",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -1167,6 +1176,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [
         "hiring_flows"
       ],
@@ -1181,7 +1191,7 @@
         "gov.hmrc.minimum_wage.non_apprentice[1].amount"
       ],
       "status": "not-computable",
-      "receipt": "039ba18ae2a0d54946b3ccc0fdfe6278224c4ccd88c4590e65078acbffca7008",
+      "receipt": "a4c9d0c637e60e1891b69b3763582b598404059b05654f18049f15f6c2458c0d",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -1198,6 +1208,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [
         "is_apprentice"
       ],
@@ -1210,7 +1221,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "ledger",
-      "receipt": "b9933113ae2899443ac562ed5b838563bb11f6265a3281472bd87983a5560367",
+      "receipt": "3532762b0654d990b1d633dfc99032841263cf4118bf47d5b0c649459b96bf92",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -1227,6 +1238,7 @@
       "placeholder": true,
       "computable": true,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "coverage": "UK",
@@ -1242,7 +1254,7 @@
         "gov.hmrc.child_benefit.eligibility.qualifying_young_person_age_limit"
       ],
       "status": "held-placeholder",
-      "receipt": "9a58052230099c666a27da8f3295b4b28f94875c854312c659859aa956b9447c",
+      "receipt": "a6322cb9f70141342d4748f98d977dc45514bfd93e7cac74665147da8c90e4a3",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -1429,6 +1441,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "coverage": "UK",
@@ -1437,7 +1450,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "needs-pe-uk-first",
-      "receipt": "c9854d693629d9443c61a2a05c7aaeee0b6bf360aa9c231f17ffb116ade15bc4",
+      "receipt": "bf8d5a215ac72724b3298f7e8c81bb2539ba4ebf31679fe7fd22693505c19252",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -1454,6 +1467,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "coverage": "England and Wales",
@@ -1462,7 +1476,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "needs-pe-uk-first",
-      "receipt": "184b226b2a1f3f2b447d9d894def87e91a9f4a56557191e567888ca70bdfa2b7",
+      "receipt": "ac165f832c6ef596c6f65056145bef8a041aee2071a3b6e411b375cf47d37581",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -1479,6 +1493,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "coverage": "England",
@@ -1487,7 +1502,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "ledger",
-      "receipt": "9056e96caa624db26d8f3d622fc9214cc35fa0ea4563e487853fbb747b33e41e",
+      "receipt": "9ffbfdd49dc4ba8809d0a6cf7266e16e331c1fe65ebf47e5bce20adeb263f1f4",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -1504,6 +1519,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "coverage": "England",
@@ -1512,7 +1528,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "ledger",
-      "receipt": "148dc74375221cb29ea0d1bc4cbfcf6d6a2560c46d4521ec5d211100698e7437",
+      "receipt": "e2dba1241b8366e2834447f0c7d81a26ffe4fe4e21824bbcf99e1f2098608c33",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
@@ -1529,6 +1545,7 @@
       "placeholder": true,
       "computable": true,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [],
       "issues": [],
       "coverage": "UK",
@@ -1541,7 +1558,7 @@
         "gov.dwp.LHA.shared_accommodation_age_threshold"
       ],
       "status": "held-placeholder",
-      "receipt": "9223f0ae7636b7ea0179484450313f11169027581f07e71f9f94c97e63c5bf0e",
+      "receipt": "1f945ff7bb97e7ac3e0fd4740a282552bdd4da7a55e0dc9290b4c05b1d0b93bd",
       "budgetary_impact": [
         {
           "year": 2027,
@@ -1728,6 +1745,7 @@
       "placeholder": true,
       "computable": false,
       "publishable": false,
+      "zero_reason": null,
       "data_needs": [
         "is_care_leaver"
       ],
@@ -1740,7 +1758,7 @@
       "official_cost": [],
       "parameters": [],
       "status": "not-computable",
-      "receipt": "522f3f1ac44897742bd129461b25836e1e206292980d053b7f5ea9f0261fa2ac",
+      "receipt": "31a6cf07a08341b2a9401732f64364b07a927ec3121d722b3f29d506a64003a3",
       "budgetary_impact": null,
       "decile": null,
       "winners_losers": null,
