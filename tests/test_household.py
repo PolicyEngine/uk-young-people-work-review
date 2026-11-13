@@ -114,6 +114,19 @@ def test_monthly_amount_survives_float32_annual():
     assert _monthly(as_float32) == 200.02
 
 
+def test_monthly_amount_rounds_once_when_the_annual_is_off_the_penny():
+    import struct
+
+    from young_people_work.household import _monthly
+
+    # The taper leaves annual UC off the penny: £2,400.175 a year is
+    # 200.0146 a month, so 200.01. Rounding the annual first (to 2,400.18)
+    # and then the twelfth would give 200.02.
+    as_float32 = struct.unpack("f", struct.pack("f", 2400.175))[0]
+    assert _monthly(as_float32) == 200.01
+    assert _monthly(2400.175) == 200.01
+
+
 def test_annual_changes_from_rounded_monthly_amounts():
     from young_people_work.household import _annual_change
 

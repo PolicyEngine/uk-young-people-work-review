@@ -238,11 +238,15 @@ def _monthly(annual: float) -> float:
     """An engine annual amount as a monthly amount on the scoring basis.
 
     The engine holds amounts as float32, which cannot carry pennies exactly
-    (2,400.18 is held as 2,400.1799...). The annual amount is first taken to
-    the penny, then divided by 12 and rounded half up once.
+    (2,400.18 is held as 2,400.1799...). Only that float32 noise is removed,
+    by reading the shortest decimal that round-trips the float32 (2,400.18;
+    an annual amount off the penny, such as 2,400.175 from the taper, stays
+    2,400.175). That is divided by 12 and rounded half up once, to the penny.
     """
-    annual_pennies = Decimal(repr(float(annual))).quantize(PENNY, rounding=ROUND_HALF_UP)
-    return _penny(annual_pennies / 12)
+    import numpy as np
+
+    exact = Decimal(np.format_float_positional(np.float32(annual), unique=True))
+    return _penny(exact / 12)
 
 
 def _annual_change(after: float, before: float) -> float:
