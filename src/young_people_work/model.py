@@ -29,8 +29,11 @@ before the file is written; the counts themselves are never written.
 """
 
 import json
+import os
 import shutil
+import signal
 import subprocess
+import threading
 import time
 from collections.abc import Callable, Iterable
 from contextlib import contextmanager
@@ -39,7 +42,7 @@ from typing import Any
 
 import numpy as np
 
-from young_people_work import publication, runtime_identity
+from young_people_work import data_build, publication, runtime_identity
 from young_people_work.models import Reform, Route
 from young_people_work.years import POLICY_YEARS, fiscal_label
 
@@ -47,8 +50,9 @@ AGE_BANDS = ["16-17", "18-20", "21-24", "25 and over"]
 AGE_EDGES = [(16, 18), (18, 21), (21, 25), (25, 200)]
 NO_CHANGE_GBP = 1.0
 BIG_CHANGE = 0.05
-LOCK_DIR = Path("/tmp/pe-heavy.lock")
-MIN_FREE_GB = 14.0
+LOCK_PATH = Path("/tmp/pe-heavy.lock")
+LOCK_LABEL = "young-people-work"
+MIN_FREE_GB = 22.0
 RUNS_DIR = runtime_identity.REPO_ROOT / "data" / "runs"
 
 HOUSEHOLD_VARIABLES = (
@@ -71,6 +75,11 @@ PERSON_MAPPED = ("in_poverty_bhc", "in_poverty_ahc")
 
 
 # --- the heavy-run lock -------------------------------------------------
+#
+# The machine protocol: the lock is a FILE holding "<pid> <label>", created
+# with noclobber (O_CREAT | O_EXCL, so a held file or legacy directory lock
+# makes the caller wait), removed only by its owner, and the run waits for
+# 22 GB of free plus inactive memory once it holds the lock.
 
 
 def free_inactive_gb() -> float | None:
@@ -78,25 +87,61 @@ def free_inactive_gb() -> float | None:
     if shutil.which("vm_stat") is None:
         return None
     out = subprocess.run(["vm_stat"], capture_output=True, text=True, check=False).stdout
-    page = 16384
+    page = None
     pages = 0
     for line in out.splitlines():
         if "page size of" in line:
             page = int(line.split("page size of")[1].split()[0])
         if line.startswith(("Pages free:", "Pages inactive:")):
             pages += int(line.split(":")[1].strip().rstrip("."))
-    return pages * page / 1e9
+    return None if page is None else pages * page / 1e9
+
+
+def lock_owner(lock_path: Path) -> str | None:
+    """The pid field of the lock file, or None if there is no such file."""
+    try:
+        fields = Path(lock_path).read_text().split()
+    except OSError:
+        return None
+    return fields[0] if fields else None
+
+
+def _try_lock(lock_path: Path, label: str) -> bool:
+    try:
+        fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
+    except FileExistsError:
+        return False
+    with os.fdopen(fd, "w") as handle:
+        handle.write(f"{os.getpid()} {label}\n")
+    return True
+
+
+def _release_lock(lock_path: Path) -> None:
+    """Remove the lock only if this process wrote it."""
+    if lock_owner(lock_path) == str(os.getpid()):
+        Path(lock_path).unlink(missing_ok=True)
+
+
+def _exit_on_term(signum, frame):
+    raise SystemExit(128 + signum)
 
 
 @contextmanager
-def heavy_lock(lock_dir: Path = LOCK_DIR, min_free_gb: float = MIN_FREE_GB, poll: float = 15.0):
-    """Take the shared heavy-run lock, then wait for memory; release on exit."""
-    while True:
-        try:
-            lock_dir.mkdir()
-            break
-        except FileExistsError:
-            time.sleep(poll)
+def heavy_lock(
+    lock_path: Path | None = None,
+    min_free_gb: float | None = None,
+    poll: float = 15.0,
+    label: str = LOCK_LABEL,
+):
+    """Take the machine-wide heavy-run lock, then wait for memory; release on
+    exit (SIGTERM included). Defaults are read at call time, so tests can
+    point ``LOCK_PATH`` at a scratch file."""
+    lock_path = Path(LOCK_PATH if lock_path is None else lock_path)
+    min_free_gb = MIN_FREE_GB if min_free_gb is None else min_free_gb
+    while not _try_lock(lock_path, label):
+        time.sleep(poll)
+    main = threading.current_thread() is threading.main_thread()
+    previous = signal.signal(signal.SIGTERM, _exit_on_term) if main else None
     try:
         while True:
             free = free_inactive_gb()
@@ -105,24 +150,80 @@ def heavy_lock(lock_dir: Path = LOCK_DIR, min_free_gb: float = MIN_FREE_GB, poll
             time.sleep(poll)
         yield
     finally:
-        try:
-            lock_dir.rmdir()
-        except OSError:
-            pass
+        if main:
+            signal.signal(signal.SIGTERM, previous)
+        _release_lock(lock_path)
 
 
 # --- simulations ----------------------------------------------------------
 
 
-def build_microsimulation(scenario=None, dataset: str | None = None):
-    """A Microsimulation pinned to the installed policyengine.py bundle."""
-    import policyengine as pe
+def fetch_dataset() -> Path:
+    """The pinned build's file (``data_build.DATA_BUILD``), downloaded once
+    into the Hugging Face cache with the saved read-only login."""
+    from huggingface_hub import hf_hub_download
 
     runtime_identity.ensure_data_token()
-    kwargs = {} if scenario is None else {"scenario": scenario}
-    return pe.uk.managed_microsimulation(
-        dataset=dataset, allow_unmanaged=dataset is not None, **kwargs
+    return Path(
+        hf_hub_download(
+            repo_id=data_build.HF_REPO,
+            filename=data_build.DATA_BUILD.hf_path,
+            repo_type=data_build.HF_REPO_TYPE,
+        )
     )
+
+
+def _runtime_dataset(path: Path):
+    """The dataset object policyengine_uk reads, as policyengine.py's managed
+    helper builds it from a local file."""
+    from policyengine_uk.data.dataset_schema import UKMultiYearDataset, UKSingleYearDataset
+
+    if UKMultiYearDataset.validate_file_path(str(path), False):
+        return UKMultiYearDataset(str(path))
+    if UKSingleYearDataset.validate_file_path(str(path), False):
+        return UKSingleYearDataset(str(path))
+    return str(path)
+
+
+def build_microsimulation(scenario=None, dataset: str | None = None):
+    """A Microsimulation on the pinned build, with the engine it was built on.
+
+    policyengine_uk is loaded directly: no policyengine.py release covers
+    the pair (``data_build.DATA_BUILD``). Refuses an installed policyengine-uk
+    other than the build's, and a file whose SHA-256 is not the build's.
+    """
+    from policyengine_uk import Microsimulation
+
+    build = data_build.DATA_BUILD
+    runtime_identity.require_build_engine()
+    path = Path(dataset) if dataset is not None else fetch_dataset()
+    sha = _checked_sha256(path)
+    if sha != build.sha256:
+        raise RuntimeError(
+            f"{path.name} has SHA-256 {sha}, not that of build {build.id} ({build.sha256})."
+        )
+    kwargs = {} if scenario is None else {"scenario": scenario}
+    sim = Microsimulation(dataset=_runtime_dataset(path), **kwargs)
+    sim.young_people_provenance = {
+        "runtime_dataset_uri": f"hf://{data_build.HF_REPO}/{build.hf_path}",
+        "runtime_dataset_revision": build.id,
+        "runtime_dataset_source": str(path),
+        "runtime_dataset_sha256": sha,
+        "managed_by": "young_people_work.model (policyengine_uk directly)",
+    }
+    return sim
+
+
+_SHA_CACHE: dict[tuple, str] = {}
+
+
+def _checked_sha256(path: Path) -> str:
+    """The file's SHA-256, hashed once per file version."""
+    stat = path.stat()
+    key = (str(path.resolve()), stat.st_size, stat.st_mtime_ns)
+    if key not in _SHA_CACHE:
+        _SHA_CACHE[key] = runtime_identity.file_sha256(path)
+    return _SHA_CACHE[key]
 
 
 def _values(result) -> np.ndarray:
@@ -483,7 +584,13 @@ def measure_figures(run_output: dict[str, Any]) -> dict[str, Any]:
 def run_measure(
     reform: Reform, years: Iterable[int] = POLICY_YEARS, build: Callable = build_microsimulation
 ) -> dict[str, Any]:
-    """One measure's run file: its receipt, identity and raw figures."""
+    """One measure's run file: its receipt, identity and raw figures.
+
+    A computable measure that a live data limit refuses never runs.
+    """
+    from young_people_work.publication import refuse_data_limited
+
+    refuse_data_limited([reform])
     out = run(
         reform.to_scenario(),
         years,

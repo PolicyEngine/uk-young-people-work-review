@@ -9,7 +9,7 @@ Two modes:
   of the right shape, not estimates.
 - ``model``: assembles the run files ``young-people-work model-run`` wrote
   (``young_people_work.model``: one measure per process, under the heavy-run
-  lock, on the bundle's certified dataset), adds the package run, the
+  lock, on the pinned build, data_build.DATA_BUILD), adds the package run, the
   household presets from the full model, receipts bound to the execution
   identity, and writes ``manifest.json`` next to ``results.json``. Status is
   ``provisional`` or, for a drill, ``mock`` (with the MOCK banner).
@@ -172,6 +172,7 @@ def _measure_values(reform) -> dict[str, float]:
 
 def build_placeholder_results() -> dict[str, Any]:
     signs = _expected_signs()
+    publication.refuse_data_limited(REFORMS)
     measures = []
     for reform in REFORMS:
         entry = reform.summary()
@@ -288,6 +289,7 @@ def build_model_results(
     if status not in ("provisional", "mock"):
         raise ValueError("Model mode writes status 'provisional' or 'mock'")
     reforms = list(REFORMS if reforms is None else reforms)
+    publication.refuse_data_limited(reforms)
     runs = model.read_runs(runs_dir)
     missing = [r.id for r in reforms if r.computable and r.id not in runs]
     if missing:
@@ -296,6 +298,23 @@ def build_model_results(
     if len(engines) != 1:
         raise ValueError("Runs come from different engines or datasets; rerun them on one G0 pair")
     engine = json.loads(engines.pop())
+    # Run files are git-ignored and survive branch switches, so the stored
+    # validated_pair is never trusted: recompute it against DATA_BUILD.
+    validated = runtime_identity.is_validated_pair(engine)
+    if engine.get("validated_pair") and not validated:
+        raise ValueError(
+            "The runs claim validated_pair but were made on dataset "
+            f"{engine.get('dataset_sha256')}, policyengine-uk "
+            f"{engine.get('policyengine_uk')}, policyengine-core "
+            f"{engine.get('policyengine_core')}, not build "
+            f"{runtime_identity.DATA_BUILD.id} with policyengine-uk "
+            f"{runtime_identity.DATA_BUILD.engine}; delete them and rerun on the pinned pair"
+        )
+    engine = {
+        **engine,
+        "validated_pair": validated,
+        "label": runtime_identity.LABEL if validated else None,
+    }
     identity = {
         "engine": engine,
         "commit": commit,

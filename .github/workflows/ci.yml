@@ -106,7 +106,7 @@ jobs:
           ! grep -q 'data-testid="placeholder-banner"' .next/server/app/index.html
 
   certified-data:
-    # Downloads the bundle's certified dataset and checks its hash. Needs the
+    # Downloads the pinned Microcosm build (data_build.DATA_BUILD) and checks its hash. Needs the
     # read-only data secret (PE_UK_PRIVATE_HF_READ_TOKEN), which a repository
     # admin adds; without it the job says so and passes. Fork PRs get no
     # secrets; never run this on pull_request_target.
@@ -125,7 +125,7 @@ jobs:
           save-cache: false
       - name: Install
         run: uv sync --locked --extra model --extra dev
-      - name: Check the bundle's certified dataset
+      - name: Check the pinned Microcosm build
         run: |
           if [ -z "$HUGGING_FACE_TOKEN" ]; then
             echo "::notice::PE_UK_PRIVATE_HF_READ_TOKEN is not set; certified-data check skipped"

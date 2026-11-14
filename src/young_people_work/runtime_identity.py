@@ -12,23 +12,28 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from young_people_work.data_build import DATA_BUILD, LABEL
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PACKAGES = ("policyengine", "policyengine-uk", "policyengine-core")
 
-# The pinned pair (uv.lock, README). tests/test_runtime_identity.py checks
-# these against uv.lock, and the model job against the installed packages.
+# The pinned pair (data_build.DATA_BUILD, uv.lock, README): the Microcosm
+# build and the policyengine-uk and policyengine-core versions it was built
+# and certified on. No policyengine.py release covers the pair, so
+# ``policyengine`` is None. tests/test_runtime_identity.py checks these
+# against uv.lock, and the model job against the installed packages.
 PINNED = {
-    "policyengine": "6.17.2",
-    "policyengine_uk": "2.174.1",
-    "policyengine_core": "3.33.3",
-    "dataset": "microcosm-uk-2024-25-national-20261107T020434Z-eeb6093e",
-    "dataset_sha256": "0a9b77db1c0dee2693cb2d47bad68da34cb662916eee4829942bcd45de581f25",
+    "policyengine": None,
+    "policyengine_uk": DATA_BUILD.engine,
+    "policyengine_core": DATA_BUILD.core,
+    "dataset": DATA_BUILD.id,
+    "dataset_sha256": DATA_BUILD.sha256,
 }
 
 
 def ensure_data_token() -> None:
-    """policyengine.py reads HUGGING_FACE_TOKEN only; fall back to the saved
-    Hugging Face login so the token never goes on a command line."""
+    """Set HUGGING_FACE_TOKEN from the saved Hugging Face login if it is
+    unset, so the token never goes on a command line."""
     import os
 
     if os.environ.get("HUGGING_FACE_TOKEN"):
@@ -50,6 +55,22 @@ def installed_versions() -> dict[str, str | None]:
         except importlib.metadata.PackageNotFoundError:
             out[name.replace("-", "_")] = None
     return out
+
+
+def require_build_engine() -> str:
+    """The installed policyengine-uk, if it is the one DATA_BUILD was made on.
+
+    Model mode and the household path both call this, so neither scores on
+    another engine. Raises otherwise: never mix a build with another engine.
+    """
+    installed = installed_versions()["policyengine_uk"]
+    if installed != DATA_BUILD.engine:
+        raise RuntimeError(
+            f"policyengine-uk {installed} is installed, but build {DATA_BUILD.id} "
+            f"was made on {DATA_BUILD.engine}. Never mix a build with another "
+            "engine version."
+        )
+    return installed
 
 
 def git_sha(root: Path = REPO_ROOT) -> str | None:
@@ -110,27 +131,38 @@ def file_sha256(path: str | Path) -> str:
     return digest.hexdigest()
 
 
-def bundle_dataset(microsim) -> dict[str, Any]:
-    """The dataset provenance policyengine.py attaches to a managed run,
-    plus the SHA-256 of the file it loaded (policyengine.py records the
-    certified hash, not the loaded file's)."""
-    bundle = dict(getattr(microsim, "policyengine_bundle", {}) or {})
+def dataset_provenance(microsim) -> dict[str, Any]:
+    """The dataset a simulation built by ``model.build_microsimulation``
+    loaded, with the SHA-256 of the file itself."""
+    record = dict(getattr(microsim, "young_people_provenance", {}) or {})
     keep = {
         key: value
-        for key, value in bundle.items()
+        for key, value in record.items()
         if isinstance(value, (str, int, float, bool)) or value is None
     }
     source = keep.pop("runtime_dataset_source", None)  # a local path: never published
-    if source and Path(source).is_file():
+    if source and "runtime_dataset_sha256" not in keep and Path(source).is_file():
         keep["runtime_dataset_sha256"] = file_sha256(source)
     return keep
+
+
+def is_validated_pair(engine: dict[str, Any]) -> bool:
+    """Whether an engine block's dataset SHA-256 and versions are the pinned
+    build's (``DATA_BUILD``). Computed, never read from the block itself."""
+    return (
+        engine.get("dataset_sha256") == DATA_BUILD.sha256
+        and engine.get("policyengine_uk") == DATA_BUILD.engine
+        and engine.get("policyengine_core") == DATA_BUILD.core
+    )
 
 
 def engine_block(microsim=None) -> dict[str, Any]:
     """The ``engine`` block of results.json.
 
     Without a simulation: the pinned strings. With one: what is installed and
-    the dataset the bundle loaded, and whether it is the certified build.
+    the dataset it loaded. ``validated_pair`` holds only when the file is the
+    pinned build (by SHA-256) and the installed policyengine-uk and
+    policyengine-core are the versions that build was made and certified on.
     """
     if microsim is None:
         return {
@@ -140,21 +172,22 @@ def engine_block(microsim=None) -> dict[str, Any]:
             "dataset": PINNED["dataset"],
             "dataset_sha256": PINNED["dataset_sha256"],
             "validated_pair": True,
+            "label": LABEL,
         }
     versions = installed_versions()
-    bundle = bundle_dataset(microsim)
-    build = bundle.get("certified_data_build_id")
-    sha = bundle.get("runtime_dataset_sha256")
-    certified = (
-        build is not None
-        and bundle.get("model_version") == versions["policyengine_uk"]
-        and sha is not None
-        and sha == bundle.get("certified_data_artifact_sha256")
+    record = dataset_provenance(microsim)
+    sha = record.get("runtime_dataset_sha256")
+    validated = (
+        sha is not None
+        and sha == DATA_BUILD.sha256
+        and versions["policyengine_uk"] == DATA_BUILD.engine
+        and versions["policyengine_core"] == DATA_BUILD.core
     )
     return {
         **versions,
-        "dataset": build or bundle.get("runtime_dataset_uri"),
-        "dataset_revision": bundle.get("runtime_dataset_revision"),
+        "dataset": DATA_BUILD.id if validated else record.get("runtime_dataset_uri"),
+        "dataset_revision": record.get("runtime_dataset_revision"),
         "dataset_sha256": sha,
-        "validated_pair": bool(certified),
+        "validated_pair": bool(validated),
+        "label": LABEL if validated else None,
     }

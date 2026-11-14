@@ -14,7 +14,7 @@ One page. Details and commands: `docs/RUNBOOK.md`.
 
 | T | Gate | Done when |
 |---|---|---|
-| before | G0 | freeze record posted: start SHA, versions, dataset id and SHA-256, certified or "unvalidated" |
+| before | G0 | freeze record posted: start SHA, versions, dataset id and SHA-256, the build label |
 | +30 min | G1 | every recommendation routed, with cause class and coverage |
 | +60 min | G2 | `make model` finished; one hand-checked household per measure |
 | +90 min | G3 | `reconcile` exits 0: every gap over 10% has a reason |
@@ -46,7 +46,7 @@ uv run python scripts/check_public_data.py
 
 | Failure | Do |
 |---|---|
-| `model-run` waits for the lock | check who holds it (`ls -ld /tmp/pe-heavy.lock`); clear it only once its owner has exited |
+| `model-run` waits for the lock | check who holds it (`cat /tmp/pe-heavy.lock`: "<pid> <label>"); never delete another owner's lock: ask its owner |
 | a computable measure has no run | `generate --mode model` fails; run it, never publish without it |
 | a gap over 10% has no reason | `reconcile` exits 1; write the reason or re-route the line |
 | a build has no banner | stop; the results status or `NEXT_PUBLIC_MOCK` is wrong |

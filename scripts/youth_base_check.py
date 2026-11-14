@@ -8,8 +8,9 @@ file and must not be committed under ``data/`` or ``dashboard/public/``.
 
 Run one heavy job at a time on a shared machine:
 
-    until mkdir /tmp/pe-heavy.lock 2>/dev/null; do sleep 30; done
-    trap 'rmdir /tmp/pe-heavy.lock' EXIT
+    until ( set -C; echo "$$ youth-base-check" > /tmp/pe-heavy.lock ) 2>/dev/null; do sleep 30; done
+    trap '[ "$(cut -d" " -f1 /tmp/pe-heavy.lock 2>/dev/null)" = "$$" ] && rm -f /tmp/pe-heavy.lock' EXIT
+    until [ "$(vm_stat | awk '/page size of/ {p=$8} /Pages free/ {f=$3} /Pages inactive/ {i=$3} END {print int((f+i)*p/1e9)}')" -ge 22 ]; do sleep 30; done
     uv run --with h5py python scripts/youth_base_check.py path/to/microcosm_uk_2024_25.h5
 """
 
@@ -99,7 +100,10 @@ def main(path: str) -> int:
         )
     for label, value, benchmark in rows:
         print(f"{label}: {value / 1e3:,.0f}k  (benchmark: {benchmark})")
-    print(f"Survey records behind the NEET proxy: {int(neet.sum())}")
+    print(
+        f"Microcosm person rows behind the NEET proxy: {int(neet.sum())} "
+        "(rows, not distinct survey households)"
+    )
     return 0
 
 

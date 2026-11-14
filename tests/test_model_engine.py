@@ -133,3 +133,30 @@ def test_one_preset_household_from_the_full_model():
     assert out["uc_monthly"] == pytest.approx(
         CURRENT_VALUES["gov.dwp.universal_credit.standard_allowance.amount.SINGLE_YOUNG"]
     )
+
+
+def test_stored_pip_points_carry_forward_and_follow_the_thresholds():
+    # Builds 9e18f010 and 6f918b81 store 2024 PIP points and no category:
+    # the category in a scored year is derived from those points against
+    # that year's thresholds, so a threshold change moves the award.
+    from young_people_work import data_limits
+
+    situation = {
+        "people": {"p": {"age": {2024: 30}, "pip_dl_points": {2024: 9}}},
+        "benunits": {"b": {"members": ["p"]}},
+        "households": {"h": {"members": ["p"]}},
+    }
+    base = Simulation(situation=situation)
+    assert str(base.calculate("pip_dl_category", Y)[0]) == "STANDARD"
+    higher = Simulation(
+        situation=situation,
+        reform={"gov.dwp.pip.daily_living.points_thresholds.standard": {f"{Y}-01-01": 10}},
+    )
+    assert str(higher.calculate("pip_dl_category", Y)[0]) == "NONE"
+    # On 6f918b81 a raise is computable under the drawn-points assumption;
+    # a standard-threshold cut is not (pip_threshold_cut: people turned down
+    # are not in the data).
+    raise_ = {"gov.dwp.pip.daily_living.points_thresholds.standard": {str(Y): 10}}
+    cut = {"gov.dwp.pip.daily_living.points_thresholds.standard": {str(Y): 6}}
+    assert not data_limits.limits_for_paths(raise_)
+    assert not data_limits.is_computable_on_data(cut)
