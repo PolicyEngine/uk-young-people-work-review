@@ -7,9 +7,18 @@ all the registry needs.
 
 A measure that moves only a limited parameter is published as not computable,
 with the reason, and never as £0 (``young_people_work.publication``).
+
+A limit with ``direction="cut"`` (ported from uk-pip-review-2026) holds only
+for a change that brings a PIP component's threshold below its current-law
+standard threshold (8) in some year; a raise passes, and so does an
+enhanced-threshold cut kept at 8 or more. Bare paths, with no values, cannot
+tell a cut from a raise and treat a ``cut`` limit as holding. A ``cut`` limit
+refuses the whole measure when it holds on any one of its paths
+(``refusing_limits``); any other limit refuses it only when every path is
+limited. ``models.Reform`` and ``publication`` enforce this.
 """
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 
 from young_people_work.data_build import DATA_BUILD
@@ -23,9 +32,51 @@ class DataLimit:
     reason: str
     issue: int | None = None
     variables: tuple[str, ...] = field(default_factory=tuple)
+    direction: str = "any"
+
+    def __post_init__(self):
+        if self.direction not in ("any", "cut"):
+            raise ValueError(f"{self.key}: direction must be 'any' or 'cut'")
 
     def covers(self, path: str) -> bool:
         return any(path == p or path.startswith((p + ".", p + "[")) for p in self.parameters)
+
+    def holds_for(self, path: str, values: Mapping | None = None) -> bool:
+        """True when the limit holds for this change (values by fiscal year).
+
+        With no values a ``cut`` limit holds: the direction is unknown.
+        """
+        if not self.covers(path):
+            return False
+        if self.direction == "any" or values is None:
+            return True
+        return is_cut(path, values)
+
+
+DL_THRESHOLDS = "gov.dwp.pip.daily_living.points_thresholds"
+MOB_THRESHOLDS = "gov.dwp.pip.mobility.points_thresholds"
+# Current-law PIP points thresholds in policyengine-uk 2.177.7, the same in
+# every year (uk-pip-review-2026 checks them against the engine).
+CURRENT_LAW_THRESHOLDS: dict[str, float] = {
+    f"{DL_THRESHOLDS}.standard": 8,
+    f"{DL_THRESHOLDS}.enhanced": 12,
+    f"{MOB_THRESHOLDS}.standard": 8,
+    f"{MOB_THRESHOLDS}.enhanced": 12,
+}
+
+
+def is_cut(path: str, values: Mapping) -> bool:
+    """True when any year's value is below the component's current-law
+    standard threshold (8): it reaches people turned down at those points,
+    who are not in the data. An enhanced threshold cut kept at 8 or more
+    moves only standard-rate recipients, all in the data."""
+    if path not in CURRENT_LAW_THRESHOLDS:
+        raise KeyError(
+            f"No current-law value recorded for {path}: give a points "
+            "threshold as its .standard or .enhanced leaf"
+        )
+    floor = CURRENT_LAW_THRESHOLDS[f"{path.rsplit('.', 1)[0]}.standard"]
+    return any(float(value) < floor for value in values.values())
 
 
 ALL_LIMITS: tuple[DataLimit, ...] = (
@@ -56,6 +107,22 @@ ALL_LIMITS: tuple[DataLimit, ...] = (
         ),
         variables=("pip_dl_points", "pip_m_points"),
     ),
+    DataLimit(
+        key="pip_threshold_cut",
+        parameters=(DL_THRESHOLDS, MOB_THRESHOLDS),
+        missing_input="pip_points_of_people_turned_down",
+        reason=(
+            "The data hold PIP assessment points only for people who get PIP. "
+            "People turned down are not in the data, so a lower standard "
+            "points threshold could only be costed for people who already "
+            "get the other component, and is not costed, alone or with other "
+            "changes. A higher threshold, or an enhanced threshold lowered "
+            "but kept at 8 or more, is costed on the assumption that the "
+            "drawn points place recipients correctly within their award."
+        ),
+        variables=("pip_dl_points", "pip_m_points"),
+        direction="cut",
+    ),
 )
 
 # Data limits keyed by the Microcosm national build they hold for. A new
@@ -71,15 +138,21 @@ ALL_LIMITS: tuple[DataLimit, ...] = (
 # still survey inputs. 6f918b81 (data_build.DATA_BUILD from 13 November
 # 2026) was re-checked the same way from its HDFStore metadata: it stores
 # pip_dl_points and pip_m_points, no PIP category column, and employment
-# income and hours as inputs, so its entries are 9e18f010's. Only the
-# pinned build's entries are live (``LIMITS``).
+# income and hours as inputs. On 6f918b81 the points are drawn only for
+# people with a PIP award (everyone else holds -1), and a recipient of one
+# component has the other drawn below 8 (María, data owner, 13 November
+# 2026). So a standard-threshold cut moves only existing recipients of the
+# other component, and the people it should reach, turned down at those
+# points, are absent: the cut is not computable there (pip_threshold_cut,
+# as in uk-pip-review-2026). Only the pinned build's entries are live
+# (``LIMITS``).
 LIMITS_BY_BUILD: dict[str, tuple[str, ...]] = {
     "eeb6093e": (
         "minimum_wage_does_not_reach_pay",
         "pip_assessment_points_missing",
     ),
     "9e18f010": ("minimum_wage_does_not_reach_pay",),
-    "6f918b81": ("minimum_wage_does_not_reach_pay",),
+    "6f918b81": ("minimum_wage_does_not_reach_pay", "pip_threshold_cut"),
 }
 
 
@@ -170,13 +243,45 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
 MISSING_INPUTS_BY_KEY = {item.key: item for item in MISSING_INPUTS}
 
 
-def limits_for_paths(paths: Iterable[str]) -> list[DataLimit]:
-    """The data limits that cover any of the given parameter paths."""
-    paths = list(paths)
-    return [limit for limit in LIMITS if any(limit.covers(p) for p in paths)]
+def _changes(changes: Iterable[str] | Mapping) -> dict[str, Mapping | None]:
+    if isinstance(changes, Mapping):
+        return dict(changes)
+    return {path: None for path in changes}
 
 
-def is_only_data_limited(paths: Iterable[str]) -> bool:
-    """True when every path is covered by a limit: the measure cannot move anyone."""
-    paths = list(paths)
-    return bool(paths) and all(limits_for_paths([p]) for p in paths)
+def limits_for_paths(changes: Iterable[str] | Mapping) -> list[DataLimit]:
+    """The live data limits that hold for any of the given changes.
+
+    Give parameter changes (path to values by fiscal year) to tell a cut
+    from a raise; bare paths treat every ``cut`` limit as holding.
+    """
+    items = _changes(changes)
+    return [
+        limit
+        for limit in LIMITS
+        if any(limit.holds_for(path, values) for path, values in items.items())
+    ]
+
+
+def is_only_data_limited(changes: Iterable[str] | Mapping) -> bool:
+    """True when a limit holds for every change."""
+    items = _changes(changes)
+    return bool(items) and all(limits_for_paths({p: v}) for p, v in items.items())
+
+
+def refusing_limits(changes: Iterable[str] | Mapping) -> list[DataLimit]:
+    """The live limits that make a measure not computable (empty: computable).
+
+    A ``cut`` limit that holds on any one path refuses the measure, whatever
+    else it changes; otherwise only a measure limited on every path is.
+    """
+    held = limits_for_paths(changes)
+    cuts = [limit for limit in held if limit.direction == "cut"]
+    if cuts:
+        return cuts
+    return held if is_only_data_limited(changes) else []
+
+
+def is_computable_on_data(changes: Iterable[str] | Mapping) -> bool:
+    """False when a live data limit refuses the measure."""
+    return not refusing_limits(changes)

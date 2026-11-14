@@ -2135,6 +2135,12 @@
       "issue": 1
     },
     {
+      "key": "pip_threshold_cut",
+      "missing_input": "pip_points_of_people_turned_down",
+      "reason": "The data hold PIP assessment points only for people who get PIP. People turned down are not in the data, so a lower standard points threshold could only be costed for people who already get the other component, and is not costed, alone or with other changes. A higher threshold, or an enhanced threshold lowered but kept at 8 or more, is costed on the assumption that the drawn points place recipients correctly within their award.",
+      "issue": null
+    },
+    {
       "key": "has_ever_worked",
       "missing_input": "has_ever_worked",
       "reason": "No work history. The closest proxy, no earnings in the survey year, includes young people who have worked before.",

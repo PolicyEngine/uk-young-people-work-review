@@ -584,7 +584,13 @@ def measure_figures(run_output: dict[str, Any]) -> dict[str, Any]:
 def run_measure(
     reform: Reform, years: Iterable[int] = POLICY_YEARS, build: Callable = build_microsimulation
 ) -> dict[str, Any]:
-    """One measure's run file: its receipt, identity and raw figures."""
+    """One measure's run file: its receipt, identity and raw figures.
+
+    A computable measure that a live data limit refuses never runs.
+    """
+    from young_people_work.publication import refuse_data_limited
+
+    refuse_data_limited([reform])
     out = run(
         reform.to_scenario(),
         years,

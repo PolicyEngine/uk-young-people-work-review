@@ -153,4 +153,10 @@ def test_stored_pip_points_carry_forward_and_follow_the_thresholds():
         reform={"gov.dwp.pip.daily_living.points_thresholds.standard": {f"{Y}-01-01": 10}},
     )
     assert str(higher.calculate("pip_dl_category", Y)[0]) == "NONE"
-    assert not data_limits.limits_for_paths(["gov.dwp.pip.daily_living.points_thresholds"])
+    # On 6f918b81 a raise is computable under the drawn-points assumption;
+    # a standard-threshold cut is not (pip_threshold_cut: people turned down
+    # are not in the data).
+    raise_ = {"gov.dwp.pip.daily_living.points_thresholds.standard": {str(Y): 10}}
+    cut = {"gov.dwp.pip.daily_living.points_thresholds.standard": {str(Y): 6}}
+    assert not data_limits.limits_for_paths(raise_)
+    assert not data_limits.is_computable_on_data(cut)

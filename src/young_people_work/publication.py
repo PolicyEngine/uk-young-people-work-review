@@ -14,7 +14,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from young_people_work import sign_off
-from young_people_work.models import Reform
+from young_people_work.models import Reform, data_limit_refusals
 
 # Fewest unweighted survey households behind any published cell.
 DISCLOSURE_FLOOR = 10
@@ -97,7 +97,35 @@ def status_of(reform: Reform) -> str:
     return "published"
 
 
+def data_limit_problems(reforms: Iterable[Reform]) -> list[str]:
+    """Computable measures that a live data limit refuses.
+
+    ``Reform``'s validator refuses these when a measure is built; this checks
+    again at publication, so a measure built another way (``model_construct``)
+    or under other limits cannot reach the page with a figure.
+    """
+    problems = []
+    for reform in reforms:
+        if reform.computable and reform.parameter_changes:
+            refused = data_limit_refusals(reform.parameter_changes)
+            if refused:
+                problems.append(
+                    f"{reform.id}: computable, but data limits refuse it on the "
+                    f"pinned build ({', '.join(refused)}); route it not-computable"
+                )
+    return problems
+
+
+def refuse_data_limited(reforms: Iterable[Reform]) -> None:
+    """Raise if any computable measure is refused by a live data limit."""
+    problems = data_limit_problems(reforms)
+    if problems:
+        raise ValueError("Publication check failed:\n" + "\n".join(problems))
+
+
 def manifest(reforms: Iterable[Reform]) -> list[dict[str, Any]]:
+    reforms = list(reforms)
+    refuse_data_limited(reforms)
     return [
         {
             "id": reform.id,

@@ -172,6 +172,7 @@ def _measure_values(reform) -> dict[str, float]:
 
 def build_placeholder_results() -> dict[str, Any]:
     signs = _expected_signs()
+    publication.refuse_data_limited(REFORMS)
     measures = []
     for reform in REFORMS:
         entry = reform.summary()
@@ -288,6 +289,7 @@ def build_model_results(
     if status not in ("provisional", "mock"):
         raise ValueError("Model mode writes status 'provisional' or 'mock'")
     reforms = list(REFORMS if reforms is None else reforms)
+    publication.refuse_data_limited(reforms)
     runs = model.read_runs(runs_dir)
     missing = [r.id for r in reforms if r.computable and r.id not in runs]
     if missing:
