@@ -149,3 +149,23 @@ def test_household_row_takes_a_tenure():
     }
     with pytest.raises(ValueError, match="tenure_type"):
         row_to_preset({"id": "h3", "age": "23", "tenure_type": "council"})
+
+
+def test_household_row_not_receiving_uc_does_not_claim():
+    from young_people_work.household import row_to_preset
+
+    def claims(row):
+        preset, year = row_to_preset({"id": "h1", "age": "23", **row})
+        benunit = to_situation(preset, year)["benunits"]["benunit"]
+        return benunit["would_claim_uc"][str(year)]
+
+    # Blank or absent means the household claims, as the presets do.
+    assert claims({}) is True
+    assert claims({"uc_received": ""}) is True
+    assert claims({"uc_received": "yes"}) is True
+    for not_received in ("not received", "No", "false", "0"):
+        assert claims({"uc_received": not_received}) is False
+    assert all(
+        to_situation(p, 2027)["benunits"]["benunit"]["would_claim_uc"] == {"2027": True}
+        for p in PRESETS_BY_ID.values()
+    )

@@ -150,7 +150,12 @@ def to_situation(preset: dict[str, Any], year: int = POLICY_YEARS[0]) -> dict[st
     if preset["monthly_rent"]:
         household["rent"] = {period: preset["monthly_rent"] * 12}
         household["tenure_type"] = {period: preset.get("tenure_type") or "RENT_PRIVATELY"}
-    benunit: dict[str, Any] = {"members": names, "would_claim_uc": {period: True}}
+    # A hand-built household claims UC unless the row says it is not received:
+    # would_claim_uc defaults to true in policyengine-uk.
+    benunit: dict[str, Any] = {
+        "members": names,
+        "would_claim_uc": {period: bool(preset.get("claims_uc", True))},
+    }
     if preset.get("lcwra"):
         # A household situation without this flag gets the protected rate
         # (the engine's default); say which the preset is.
@@ -316,6 +321,7 @@ HOUSEHOLD_COLUMNS = (
     "in_approved_training",
     "parent_age",
     "parent_employment_income",
+    "uc_received",
 )
 
 
@@ -344,6 +350,15 @@ def _truthy(value: Any) -> bool:
     return str(value).strip().lower() in ("1", "true", "yes", "y")
 
 
+# uc_received values that mean the household does not get Universal Credit.
+UC_NOT_RECEIVED = ("0", "false", "no", "n", "not received")
+
+
+def _claims_uc(value: Any) -> bool:
+    """Whether a row's household claims UC; blank means it does, as the presets."""
+    return str(value or "").strip().lower() not in UC_NOT_RECEIVED
+
+
 def row_to_preset(row: dict[str, Any]) -> tuple[dict[str, Any], int]:
     """A household input row as a preset, and its year."""
     unknown = set(row) - set(HOUSEHOLD_COLUMNS)
@@ -367,6 +382,7 @@ def row_to_preset(row: dict[str, Any]) -> tuple[dict[str, Any], int]:
         "monthly_rent": number("monthly_rent"),
         "tenure_type": _tenure(row.get("tenure_type")),
         "in_approved_training": _truthy(row.get("in_approved_training", "")),
+        "claims_uc": _claims_uc(row.get("uc_received")),
         "full_model_only": True,
     }
     if str(row.get("parent_age", "") or "").strip():
