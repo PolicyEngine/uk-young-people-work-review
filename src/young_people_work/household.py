@@ -228,7 +228,12 @@ def simulate(
     Needs the ``model`` extra. Builds one household, never a survey
     simulation. A reform's modifier runs with its own timing, as in model
     mode. Each amount is rounded to the penny once, here, at the end.
+    Refuses an installed policyengine-uk other than ``DATA_BUILD``'s, as
+    model mode does.
     """
+    from young_people_work.runtime_identity import require_build_engine
+
+    require_build_engine()
     from policyengine_uk import Simulation
 
     scenario = None if reform is None else reform.to_scenario()
@@ -325,7 +330,14 @@ def read_households(path: Path) -> list[dict[str, Any]]:
 
 
 def score_households(path: Path, reforms: list, commit: str | None) -> list[dict[str, Any]]:
-    """One output row per household and reform, on the scoring basis."""
+    """One output row per household and reform, on the scoring basis.
+
+    Refuses an installed policyengine-uk other than ``DATA_BUILD``'s before
+    reading any row.
+    """
+    from young_people_work.runtime_identity import require_build_engine
+
+    require_build_engine()
     out = []
     for row in read_households(path):
         preset, year = row_to_preset(row)

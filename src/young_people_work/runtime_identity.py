@@ -57,6 +57,22 @@ def installed_versions() -> dict[str, str | None]:
     return out
 
 
+def require_build_engine() -> str:
+    """The installed policyengine-uk, if it is the one DATA_BUILD was made on.
+
+    Model mode and the household path both call this, so neither scores on
+    another engine. Raises otherwise: never mix a build with another engine.
+    """
+    installed = installed_versions()["policyengine_uk"]
+    if installed != DATA_BUILD.engine:
+        raise RuntimeError(
+            f"policyengine-uk {installed} is installed, but build {DATA_BUILD.id} "
+            f"was made on {DATA_BUILD.engine}. Never mix a build with another "
+            "engine version."
+        )
+    return installed
+
+
 def git_sha(root: Path = REPO_ROOT) -> str | None:
     try:
         return subprocess.run(

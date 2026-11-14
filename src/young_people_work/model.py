@@ -195,12 +195,7 @@ def build_microsimulation(scenario=None, dataset: str | None = None):
     from policyengine_uk import Microsimulation
 
     build = data_build.DATA_BUILD
-    installed = runtime_identity.installed_versions()["policyengine_uk"]
-    if installed != build.engine:
-        raise RuntimeError(
-            f"policyengine-uk {installed} is installed, but build {build.id} was made on "
-            f"{build.engine}. Never mix a build with another engine version."
-        )
+    runtime_identity.require_build_engine()
     path = Path(dataset) if dataset is not None else fetch_dataset()
     sha = _checked_sha256(path)
     if sha != build.sha256:

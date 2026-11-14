@@ -90,3 +90,34 @@ def test_lcwra_presets_say_which_rate_they_get():
 def test_sketch_applies_the_health_element_age_test():
     preset = PRESETS_BY_ID["single_20_new_health_element"]
     assert uc_monthly(preset, health_min_age=22) == pytest.approx(353.17)
+
+
+def _installed(monkeypatch, version):
+    from young_people_work import runtime_identity
+
+    monkeypatch.setattr(
+        runtime_identity,
+        "installed_versions",
+        lambda: {"policyengine_uk": version, "policyengine_core": None},
+    )
+
+
+def test_household_path_refuses_another_engine(monkeypatch, tmp_path):
+    # REVIEW2 Y2: the household path checks the engine as model mode does,
+    # before any simulation or input row.
+    from young_people_work import household
+    from young_people_work.data_build import DATA_BUILD
+
+    _installed(monkeypatch, "2.174.1")
+    with pytest.raises(RuntimeError, match=DATA_BUILD.engine):
+        household.simulate({"people": {}})
+    with pytest.raises(RuntimeError, match="Never mix"):
+        household.score_households(tmp_path / "absent.csv", [], None)
+
+
+def test_household_engine_check_accepts_the_build_engine(monkeypatch):
+    from young_people_work import runtime_identity
+    from young_people_work.data_build import DATA_BUILD
+
+    _installed(monkeypatch, DATA_BUILD.engine)
+    assert runtime_identity.require_build_engine() == DATA_BUILD.engine
