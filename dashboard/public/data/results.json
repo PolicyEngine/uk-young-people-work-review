@@ -2136,7 +2136,7 @@
     {
       "key": "pip_assessment_points_missing",
       "missing_input": "pip_dl_points",
-      "reason": "The data hold the PIP award level, not the assessment points behind it, so a change to the points needed for an award cannot be costed. Changes to the weekly rates can.",
+      "reason": "On the certified build (eeb6093e) the data hold the PIP award level, not the assessment points behind it, so a change to the points needed for an award cannot be costed. Build 6f918b81 stores points for PIP recipients only (non-recipients hold -1) and has no award-category columns; people turned down for PIP are not in the data, so a points cut can be costed only for the existing caseload. Changes to the weekly rates can be costed on either build.",
       "issue": null
     },
     {
@@ -2166,7 +2166,7 @@
     {
       "key": "is_apprentice",
       "missing_input": "is_apprentice",
-      "reason": "The certified national build (eeb6093e) stores an apprentice flag, but it is drawn only at ages 21 to 24, to size the employer National Insurance relief for apprentices: about 214 to 237 records, about 130,000 people weighted. It supports a national score of that 21 to 24 relief, which comes out about 28% short of HMRC (£0.27bn against £0.37bn in 2024-25). It does not describe apprentices, other ages or any area below national level, so effects on apprentices could be shown only as example households.",
+      "reason": "The certified national build (eeb6093e) stores an apprentice flag, but it is drawn only at ages 21 to 24, to size the employer National Insurance relief for apprentices: about 214 to 237 person rows, about 130,000 people weighted (on build 6f918b81, 237 rows from only 34 survey households, about 135,000 weighted). It supports a national score of that 21 to 24 relief, which comes out about 28% short of HMRC (£0.27bn against £0.37bn in 2024-25). It does not describe apprentices, other ages or any area below national level, so effects on apprentices could be shown only as example households.",
       "issue": 6
     },
     {
