@@ -350,13 +350,22 @@ def _truthy(value: Any) -> bool:
     return str(value).strip().lower() in ("1", "true", "yes", "y")
 
 
-# uc_received values that mean the household does not get Universal Credit.
+# uc_received values. Blank means the household claims, as the presets do.
+UC_RECEIVED = ("1", "true", "yes", "y", "received")
 UC_NOT_RECEIVED = ("0", "false", "no", "n", "not received")
 
 
 def _claims_uc(value: Any) -> bool:
     """Whether a row's household claims UC; blank means it does, as the presets."""
-    return str(value or "").strip().lower() not in UC_NOT_RECEIVED
+    text = str(value or "").strip().lower()
+    if not text or text in UC_RECEIVED:
+        return True
+    if text in UC_NOT_RECEIVED:
+        return False
+    raise ValueError(
+        f"Unknown uc_received {value!r}: leave blank or use one of "
+        f"{', '.join(UC_RECEIVED + UC_NOT_RECEIVED)}"
+    )
 
 
 def row_to_preset(row: dict[str, Any]) -> tuple[dict[str, Any], int]:

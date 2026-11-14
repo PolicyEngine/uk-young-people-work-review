@@ -165,6 +165,10 @@ def test_household_row_not_receiving_uc_does_not_claim():
     assert claims({"uc_received": "yes"}) is True
     for not_received in ("not received", "No", "false", "0"):
         assert claims({"uc_received": not_received}) is False
+    # An unknown value is refused, not scored as claiming.
+    for unknown in ("n/a", "none", "not recieved"):
+        with pytest.raises(ValueError, match="uc_received"):
+            claims({"uc_received": unknown})
     assert all(
         to_situation(p, 2027)["benunits"]["benunit"]["would_claim_uc"] == {"2027": True}
         for p in PRESETS_BY_ID.values()
