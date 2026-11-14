@@ -48,9 +48,13 @@ LIMITS: tuple[DataLimit, ...] = (
         ),
         missing_input="pip_dl_points",
         reason=(
-            "The data hold the PIP award level, not the assessment points behind "
-            "it, so a change to the points needed for an award cannot be costed. "
-            "Changes to the weekly rates can."
+            "On the certified build (eeb6093e) the data hold the PIP award level, "
+            "not the assessment points behind it, so a change to the points needed "
+            "for an award cannot be costed. Build 6f918b81 stores points for PIP "
+            "recipients only (non-recipients hold -1) and has no award-category "
+            "columns; people turned down for PIP are not in the data, so a points "
+            "cut can be costed only for the existing caseload. Changes to the "
+            "weekly rates can be costed on either build."
         ),
         variables=("pip_dl_points", "pip_m_points"),
     ),
@@ -94,8 +98,11 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
     ),
     MissingInput(
         "wca_outcome",
-        "No Work Capability Assessment outcome. The health element group is "
-        "inferred from disability-benefit receipt.",
+        "No Work Capability Assessment outcome. On the certified build "
+        "(eeb6093e) the health element group is inferred from "
+        "disability-benefit receipt. Builds that include Microcosm #1550 store "
+        "LCW and LCWRA from the survey's own UC administrative record instead, "
+        "and build 6f918b81 also fits LCWRA households to DWP's paid count.",
         3,
     ),
     MissingInput(
@@ -110,8 +117,9 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
         "is_apprentice",
         "The certified national build (eeb6093e) stores an apprentice flag, but "
         "it is drawn only at ages 21 to 24, to size the employer National "
-        "Insurance relief for apprentices: about 214 to 237 records, about "
-        "130,000 people weighted. It supports a national score of that 21 to 24 "
+        "Insurance relief for apprentices: about 214 to 237 person rows, about "
+        "130,000 people weighted (on build 6f918b81, 237 rows from only 34 "
+        "survey households, about 135,000 weighted). It supports a national score of that 21 to 24 "
         "relief, which comes out about 28% short of HMRC (£0.27bn against "
         "£0.37bn in 2024-25). It does not describe apprentices, other ages or "
         "any area below national level, so effects on apprentices could be "
@@ -121,8 +129,11 @@ MISSING_INPUTS: tuple[MissingInput, ...] = (
     MissingInput(
         "employees_under_21",
         "Employees under 21 are not a separate calibration target. The employer "
-        "National Insurance relief for them is checked against HMRC's estimate "
-        "on the data used for publication.",
+        "National Insurance relief for them comes out close to HMRC in 2024-25 "
+        "(about £1.06bn against £1.10bn), but the gap opens in the step to "
+        "2025-26 (about £1.55bn against HMRC's £1.9bn projection, about 18% "
+        "short), so figures for the relief from 2025-26 on are likely too low. It is "
+        "checked again on the data used for publication.",
         6,
     ),
     MissingInput(
